@@ -30,7 +30,7 @@ AntV的G6库致力于处理关系图，并且有很好的绑定与使用的借�
 
 关于文字描述，在贝塞尔曲线正中心可以加上文字的描述，效果如图：
 
-![image-20180527143825343](/Users/mintaboku/Documents/antv:g6/text-bes.png)
+![image-20180527143825343](text-bes.png)
 
 #### 自己到自己的边
 
