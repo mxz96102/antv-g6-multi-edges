@@ -30,6 +30,7 @@ function getArcCenter(node1, node2) {
   let ang = 0.5 * Math.PI + Math.atan2(c.dy, c.dx);
 
   return function (vol) {
+    vol = vol/(1-Math.sin(ang))
     let [x, y] = [c.x - vol * Math.cos(ang), c.y - Math.sin(ang) * vol];
     let ang2 = Math.atan2(Math.sqrt((c.dx ** 2)+ (c.dy ** 2))/2, vol);
     let r = Math.sqrt(((node1.x - x) ** 2)+ ((node1.y - y) ** 2));
@@ -165,7 +166,7 @@ function regsLine(g6) {
           p3: [cfg.points[1].x, cfg.points[1].y],
           stroke: cfg.color,
           lineWidth: cfg.size,
-          label: 'some'
+          arrow: true
         }
       });
     }
@@ -173,6 +174,14 @@ function regsLine(g6) {
 }
 
 function regrLine(g6) {
+  let stateMap = {
+    10: '#aa3333',
+    8: '#aa5511',
+    70: '#dd1166',
+    40: '#33aa33',
+    60: '#3333aa',
+
+  };
   let edgeMap = {};
   let pre = [];
   let cleanEdgeMap = () => {
@@ -217,7 +226,7 @@ function regrLine(g6) {
       edgeMap[n1s][n2s] = 0;
     }
 
-    return p(600 - 100*n)
+    return p(100*n)
   }
 
   g6.registEdge('rline', {
@@ -252,6 +261,7 @@ function regrLine(g6) {
             startAngle: start,
             endAngle: end,
             stroke: '#66ccff',
+            arrow: true
           }
         });
       }
@@ -277,7 +287,8 @@ function regrLine(g6) {
           r: p1[2],
           startAngle: start,
           endAngle: end,
-          stroke: cfg.color,
+          stroke: stateMap[cfg.source._attrs.model.origin.status],
+          arrow: true
         }
       })
     }

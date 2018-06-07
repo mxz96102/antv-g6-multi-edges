@@ -75,7 +75,7 @@ this.event=e};i.augment(r,{preventDefault:function(){this.defaultPrevented=this.
 var t=this.calculateAnchorPoints();return this.set("anchorPoints",t),t},hideBox:function(){var t=this.get("activedRectGroup");t&&t.remove()},showBox:function(){var t=this.getBBox(),e=this.getKeyShape(),n=e.attr("lineWidth"),r=this.get("activedRectRootGroup"),a=this.get("activedRectGroup");a&&a.remove(),a=r.addGroup({zIndex:o.zIndex.activedNodeRect,id:this.get("id")}),this.set("activedRectGroup",a),n=i.isNumber(n)?n:0,a.addShape("rect",{attrs:i.mix({x:t.x+n/2,y:t.y+n/2,width:t.width-n,height:t.height-n},o.nodeActivedBoxStyle,o.nodeAcitvedBoxStyle)})},getAnchorPoints:function(){var t=this.get("anchorPoints");return t||this._calculateAnchorPoints()},setActiveStatus:function(t){var e=this;a.superclass.setActiveStatus.call(this,t,function(){e.showBox()},function(){e.hideBox()})},getCenter:function(){var t=this.getBBox();return{x:t.centerX,y:t.centerY}},getPosition:function(){var t=this.get("model");return{x:t.x,y:t.y}},getAnchor:function(t){var e=this.getCenter(),n=this.getAnchorPoints(),r=void 0;if(i.isNumber(t)&&i.isArray(n))return this.getAnchorByIndex(t);if(i.isObject(t)&&(r=this.getIntersectionByPoint(t)),(i.isArray(t)||i.isString(t))&&(r=this.getIntersectionByPath(t)),r){if("auto"===n)return r;if(i.isArray(n))return i.getSnapAnchor(this,r)}return e},getIntersectionByPoint:function(t){var e=this.getBBox(),n=this.get("intersectBox"),r=void 0;return r="rect"===n?i.getRectIntersect(e,t):i.getCircleIntersect(t.x,t.y,e.centerX,e.centerY,Math.max(e.width,e.height)/2)},getRootKeyShapePath:function(){var t=this.get("graph"),e=this.getKeyShape(),n=i.clone(e.attr("path")),r=this.getGroup(),o=t.get("rootGroup");return n=i.pathToAbsolute(n),i.each(n,function(t){var e=void 0;if("a"===t[0]||"A"===t[0])e={x:t[6],y:t[7]},e=i.applyPoint(e,r,o),t[6]=e.x,t[7]=e.y;else for(var n=1;n<t.length;n+=2)e={x:t[n],y:t[n+1]},e=i.applyPoint(e,r,o),t[n]=e.x,t[n+1]=e.y}),n},getIntersectionByPath:function(t){var e=this.getRootKeyShapePath(),n=i.pathIntersection(t,e)[0];if(!n){var r=this.getBBox(),o=i.getRectPath(r.x,r.y,r.width,r.height);n=i.pathIntersection(t,o)[0]}return n},getAnchorByIndex:function(t){var e=this.getAnchorPoints();return e[t]},getControlPoints:function(){var t=this,e=t.getBBox(),n=[];return n.push({x:e.x,y:e.y}),n.push({x:e.maxX,y:e.y}),n.push({x:e.maxX,y:e.maxY}),n.push({x:e.x,y:e.maxY}),n},getDelegationPath:function(t){var e=this,n=e.getBBox(),i=t.x,r=t.y,o=t.size,a=n.width,s=n.height;o&&(a=o[0],s=o[1]);var u=[];return u.push(["M",i-a/2,r-s/2]),u.push(["L",i+a/2,r-s/2]),u.push(["L",i+a/2,r+s/2]),u.push(["L",i-a/2,r+s/2]),u.push(["Z"]),u},addEdge:function(t){this.get("edges").push(t)},removeEdge:function(t){i.remove(this.get("edges"),t)},showAnchor:function(){var t=this,e=t.getAnchorPoints(),n=t.get("anchorPoints"),r=t.get("anchorPointRootGroup"),a=t.get("anchorGroup");a&&a.remove(!0),a=r.addGroup({zIndex:o.zIndex.anchorPoint,id:t.get("id")}),i.each(e,function(e,r){a.addShape("circle",{class:"anchor-point",item:t,point:e,index:r,anchorPoint:n[r],freezePoint:e,linkable:e.linkable,hoverStyle:i.mix({},o.anchorPointHoverStyle,e.hoverStyle),attrs:i.mix({x:e.x,y:e.y},o.anchorPointStyle,e.style)})}),this.set("anchorGroup",a)},hideAnchor:function(){var t=this.get("anchorGroup");t&&t.remove(!0),this.set("anchorGroup",null)},updateAnchor:function(t,e){var n=this.getAnchorPoints(),r=n[t];r&&i.mix(r,e),this.showAnchor()},beforeDraw:function(){a.superclass.beforeDraw.call(this);var t=this.get("graph"),e=this.get("group"),n=this.getShapeCfg();e.initTransform(),t&&i.isFunction(t.beforeNodeDraw)&&t.beforeNodeDraw(this),n.shape||(n.shape=t.get("defaultNodeShape")),e.translate(n.x,n.y),n.x=0,n.y=0},afterDraw:function(){var t=this.get("graph"),e=this.getShapeObj();t&&i.isFunction(t.afterNodeDraw)&&t.afterNodeDraw(this),this._calculateBBox(),e&&e.class&&this.set("class",e.class),this._calculateAnchorPoints(),a.superclass.afterDraw.call(this)},show:function(){for(var t=this.get("edges"),e=void 0,n=0;n<t.length;n++)e=t[n],!e.isVisible()&&e.showAble()&&e._show();this._show()},hide:function(){for(var t=this.get("edges"),e=void 0,n=0;n<t.length;n++)e=t[n],e.isVisible()&&e._hide();this._hide()},getLinkNodes:function(){var t=this,e=t.get("graph"),n=t.get("edges"),r=e.get("itemCache"),o=[],a=void 0,s=void 0,u=void 0;return i.each(n,function(e){a=e.get("model"),s=r[a.target],u=r[a.source],o.indexOf(s)===-1&&s!==t&&o.push(s),o.indexOf(u)===-1&&u!==t&&o.push(u)}),o},getUnLinkNodes:function(){var t=this.get("id"),e=this.getLinkNodes(),n=this.get("graph"),r=n.get("itemCache"),o=[];return i.each(r,function(n){"node"===n.get("type")&&e.indexOf(n)===-1&&n.get("id")!==t&&o.push(n)}),o},getSourceItems:function(){var t=this.get("id");return this.getRelativeItems(function(e){var n=e.getModel();return n.target===t})},getTargetItems:function(){var t=this.get("id");return this.getRelativeItems(function(e){var n=e.getModel();return n.source===t})},getRelativeItems:function(t){var e=this,n=e.get("id"),r=e.get("graph"),o=e.get("edges"),a=r.get("itemCache"),s=[],u=void 0,c=void 0,h=void 0;return t&&(o=i.filter(o,t)),s=s.concat(o),i.each(o,function(t){h=t.get("model"),u=a[h.target],c=a[h.source],s.indexOf(u)===-1&&u.get("id")!==n&&s.push(u),s.indexOf(c)===-1&&c.get("id")!==n&&s.push(c)}),s},getEdges:function(){return this.get("edges")},getUnRelativeItems:function(){var t=this.get("id"),e=this.get("graph"),n=e.get("itemCache"),r=this.getRelativeItems(),o=[];return i.each(n,function(e){r.indexOf(e)===-1&&e.get("id")!==t&&o.push(e)}),o},destroy:function(t){var e=this.get("anchorGroup"),n=this.get("activedRectGroup");e&&e.remove(),n&&n.remove(),a.superclass.destroy.call(this,t)},updatePosition:function(){var t=this.get("model"),e=this.get("group"),n=this.get("graph");e.initTransform(),e.translate(t.x,t.y),this._calculateBBox(),this._calculateAnchorPoints(),n.fire("afteritemrender",{item:this})}}),t.exports=a},function(t,e,n){"use strict";var i=n(1),r=function(t){i.mix(this,t)};i.augment(r,{type:null,mappingType:"auto",dims:null,callback:null,getValue:function(t){var e=this.dims,n=this.callback,r=this.mappingType,o=null,a=null;if(n)if("auto"===r){var s=[];i.each(e,function(e){s.push(t[e])}),o=n.apply(this,s)}else o=n.call(this,t);else o=e?e:t[this.type];return i.isArray(o)||(o=[o]),a=o.length>1?o:o[0]}}),t.exports=r},function(t,e,n){"use strict";var i=n(3),r=function(){};i.augment(r,{isItemActived:function(t){return t.isActived()},setItemActived:function(t,e){this.setItemsActived([t],e)},setItemsActived:function(t,e){var n=this;0!==t.length&&(e!==!1?i.each(t,function(t){t.setActived(),n.fire("itemactived",{item:t})}):i.each(t,function(t){t.clearActived(),n.fire("itemunactived",{item:t})}),this.refresh())},getActived:function(){var t=this,e=this.getItems(),n=null;return i.each(e,function(e){if(t.isItemActived(e))return n=e,!1}),n},getAllActived:function(){var t=this,e=this.getItems(),n=[];return i.each(e,function(e){t.isItemActived(e)&&n.push(e)}),n},clearAllActived:function(){var t=this.getAllActived();return this.setItemsActived(t,!1),this}}),t.exports=r},function(t,e,n){"use strict";var i=n(1),r=function(){};i.augment(r,{setActiveStatus:function(){},isActived:function(){return this.get("actived")},setActived:function(){this.setActiveStatus(!0),this.set("actived",!0)},clearActived:function(){this.setActiveStatus(!1),this.set("actived",!1)}}),t.exports=r},function(t,e,n){"use strict";var i=n(3),r=function(){};r.ATTRS={nodeFilters:[],edgeFilters:[]},i.augment(r,{_addFilter:function(t,e){var n=this.get(t+"Filters");n.push(e)},_removeFilter:function(t,e){var n=this.get(t+"Filters");this.set(t+"Filters",i.filter(n,function(t){return e!==t}))},_filter:function(t){var e=this,n=this.get(t+"Filters"),r=this.get(t+"s"),o=void 0,a=void 0;i.each(r,function(t){o=e.find(t.id),a=!0,i.each(n,function(e){a&&!e(t)&&(a=!1)}),a?o.show():o.hide()}),this.fire("filter")},addNodeFilter:function(t){this._addFilter("node",t)},addEdgeFilter:function(t){this._addFilter("edge",t)},removeNodeFilter:function(t){this._removeFilter("node",t)},removeEdgeFilter:function(t){this._removeFilter("edge",t)},filterNode:function(){this._filter("node")},filterEdge:function(){this._filter("edge")},filter:function(t){switch(t){case"node":this.filterNode();break;case"edge":this.filterEdge();break;default:this.filterNode(),this.filterEdge()}this.draw(!1)}}),t.exports=r},function(t,e,n){"use strict";var i=n(1),r=n(4),o=n(7),a=r.Matrix3,s=function(){};s.ATTRS={fitView:null,fitViewPadding:o.fitViewPadding},i.augment(s,{_fitView:function(){var t=this.get("fitView"),e=this.get("items");i.isString(t)&&e.length>0&&this[t](!1),i.isObject(t)&&this.focusPoint(t,!1)},_zoom:function(t,e,n){var i=new a,r=this.get("width"),o=this.get("height"),s=this.get("minZoom"),u=this.getBBox(),c=(u.maxX+u.minX)/2,h=(u.maxY+u.minY)/2,l=this.get("fitViewPadding"),d=c,f=h,g=u.maxX-u.minX+2*l,p=u.maxY-u.minY+2*l;n&&(d=n.x,f=n.y),e&&(r=g,o=p,this.changeSize(g,p)),t||(t=r/g,r/g>o/p&&(t=o/p)),(!t||t<s)&&(t=s),i.translate(-d,-f),i.scale(t,t),i.translate(r/2,o/2),this.updateMatrix(i)},zoomAt:function(t,e,n){var i=new a;i.translate(-t,-e),i.scale(n,n),i.translate(t,e),this.updateMatrix(i),this.draw()},zoom:function(t,e){this._zoom(t),e!==!1&&this.draw()},autoZoom:function(t){this._zoom(),t!==!1&&this.draw()},resetZoom:function(t){var e=new a;this.updateMatrix(e),t!==!1&&this.draw()},autoSize:function(t){this._zoom(void 0,!0),t!==!1&&this.draw()},tl:function(){var t=this.getBBox(),e=new a,n=this.get("fitViewPadding");e.translate(-t.minX+n,-t.minY+n),this.updateMatrix(e)},lc:function(){var t=this.getBBox(),e=new a,n=this.get("fitViewPadding"),i=this.get("height");e.translate(-t.minX+n,-t.minY+i/2-t.height/2),this.updateMatrix(e)},bl:function(){var t=this.getBBox(),e=new a,n=this.get("fitViewPadding"),i=this.get("height");e.translate(-t.minX+n,-t.minY+i-t.height-n),this.updateMatrix(e)},cc:function(){var t=this.getBBox(),e=new a,n=this.get("height"),i=this.get("width");e.translate(-t.minX+(i-t.width)/2,-t.minY+(n-t.height)/2),this.updateMatrix(e)},tc:function(){var t=this.getBBox(),e=new a,n=this.get("width"),i=this.get("fitViewPadding");e.translate(-t.minX+(n-t.width)/2,-t.minY+i),this.updateMatrix(e)},tr:function(){var t=this.getBBox(),e=new a,n=this.get("width"),i=this.get("fitViewPadding");e.translate(-t.minX+n-t.width-i,-t.minY+i),this.updateMatrix(e)},rc:function(){var t=this.getBBox(),e=new a,n=this.get("height"),i=this.get("width"),r=this.get("fitViewPadding");e.translate(-t.minX+i-t.width-r,-t.minY+(n-t.height)/2),this.updateMatrix(e)},br:function(){var t=this.getBBox(),e=new a,n=this.get("height"),i=this.get("width"),r=this.get("fitViewPadding");e.translate(-t.minX+i-t.width-r,-t.minY+n-t.height-r),this.updateMatrix(e)},bc:function(){var t=this.getBBox(),e=new a,n=this.get("height"),i=this.get("width"),r=this.get("fitViewPadding");e.translate(-t.minX+(i-t.width)/2,-t.minY+n-t.height-r),this.updateMatrix(e)},focusPoint:function(t,e){this._zoom(1,void 0,t),e!==!1&&this.draw()}}),t.exports=s},function(t,e,n){"use strict";var i=n(3),r=function(){};i.augment(r,{isNode:i.isNode,isEdge:i.isEdge,getItemsBy:function(t){var e=this.get("itemCache"),n=[];return i.each(e,function(e){t(e)&&n.push(e)}),n},getNodes:function(t){if(t){var e=[];return this.getItemsBy(function(n){i.isNode(n)&&e.push(t(n))}),e}return this.getItemsBy(function(t){return i.isNode(t)})},getEdges:function(t){if(t){var e=[];return this.getItemsBy(function(n){i.isEdge(n)&&e.push(t(n))}),e}return this.getItemsBy(function(t){return i.isEdge(t)})},getItems:function(){var t=this.get("itemCache");return i.objectToValues(t)}}),t.exports=r},function(t,e,n){"use strict";var i=n(1),r=function(){};r.ATTRS={layoutFn:null,layoutCfg:null,layout:null},i.augment(r,{_initLayout:function(){var t=this,e=this.get("layoutFn"),n=this.get("layoutCfg"),i=this.get("layout");!i&&e&&n&&(i=new e(n),this.set("layout",i)),i&&this.on("afteritemrender",function(e){t.isNode(e.item)?t.setNodeSize(e.item):t.setEdgeSize(e.item)})},layout:function(){},setNodeSize:function(t){var e=t.getBBox(),n=t.getModel();n.width=e.width,n.height=e.height},setEdgeSize:function(t){var e=t.getKeyShape(),n=t.getModel();i.isNumber(n.lineWidth)||(n.lineWidth=e.attr("lineWidth"))},_doLayout:function(){var t=this.get("layout"),e=this.get("autoLayout");t&&e&&this.layout()},changeLayout:function(){}}),t.exports=r},function(t,e,n){"use strict";var i=n(1),r=function(){};r.ATTRS={modalItems:[]},i.augment(r,{_initModal:function(){},_updateModalRect:function(){var t=this.get("modalRect"),e=this.get("width"),n=this.get("height");t.attr({x:0,y:0,width:e,height:n})},showModal:function(){var t=this.get("modalGroup"),e=this.get("modalRect");this._updateModalRect(),t.show(),e.show(),this.draw()},hideModal:function(){var t=this.get("modalGroup"),e=this.get("modalRect");t.hide(),e.hide(),this.draw()},modal:function(t){var e=this.get("modalGroup");i.each(t,function(t){var n=t.getGroup(),i=n.getParent();n.set("originParent",i),e.add(n)}),this.showModal(),this.set("modalItems",t)},unModal:function(){var t=this.get("modalItems");i.each(t,function(t){var e=t.getGroup(),n=e.get("originParent");n.add(e)}),this.set("modalItems",[]),this.hideModal()}}),t.exports=r},function(t,e,n){"use strict";function i(t,e){var n=void 0,i=void 0;for(n=0;n<t.length;n++)for(i=0;i<e.length;i++)t[n]===e[i]&&t.splice(n,1);for(n=0;n<e.length;n++)t.push(e[n]);return t}function r(t,e){for(var n=0;n<t.length;n++)if(t[n]===e){t.splice(n,1);break}}var o=n(1),a=n(2),s=function(){};s.ATTRS={modes:null,mode:"default",behaviourFilter:null,behaviours:null},o.augment(s,{_initMode:function(){var t=this.get("modes"),e=this.get("mode");t||(t=this.constructor.Mode,this.set("modes",t)),this.changeMode(e)},_filterBehaviour:function(t){var e=this.get("behaviourFilter"),n={};return o.each(t,function(t,i){n[i]=o.filter(t,function(t){return e.indexOf(t)===-1})}),n},_mapCursor:function(t){var e={add:"pointer",drag:"move",default:"default",edit:"default"},n=e[t];n&&this.css({cursor:e[t]})},filterBehaviour:function(t){this.set("behaviourFilter",t),this.resetMode()},addBehaviour:function(t,e){var n=this.get("modes");return o.isArray(t)?o.each(n,function(e,r){n[r]=i(e,t)}):n[t]?n[t]=i(n[t],e):n[t]=e,this.resetMode(),this},removeBehaviour:function(t,e){var n=this.get("modes");return o.isArray(t)?o.each(n,function(e){o.each(t,function(t){r(e,t)})}):n[t]&&o.each(e,function(e){r(n[t],e)}),this.resetMode(),this},resetMode:function(){var t=this.get("mode");this.changeMode(t)},changeMode:function(t){var e=this.get("modes"),n=this.get("behaviourFilter");e&&"none"!==e&&(n&&(e=this._filterBehaviour(e)),e[t]&&(a.resetMode(e[t],this),this.set("mode",t),this._mapCursor(t)))}}),t.exports=s},function(t,e,n){"use strict";var i=n(1),r=function(){};r.ATTRS={plugins:null},i.augment(r,{_pluginInit:function(){var t=this,e=this.get("plugins");i.each(e,function(e){e.set("graph",t),e.init()})},_pluginDestroy:function(){var t=this.get("plugins");i.each(t,function(t){t.destroy()})}}),t.exports=r},function(t,e,n){"use strict";var i=n(3),r=n(29);r.registGeom("edge",{defaultShapeType:"line",getPath:function(t,e){var n=this.getShape(t);return!!i.isFunction(n.getPath)&&n.getPath(e)}}),r.registEdge("polyLineFlow",{getPath:function(t){return i.getEdgePath("polyLineFlow",t,"line")},draw:function(t,e){return i.drawEdge("polyLineFlow",t,e,!0,"line")}}),r.registEdge("line",{getPath:function(t){return i.getEdgePath("line",t,"line")},draw:function(t,e){return i.drawEdge("line",t,e,!1,"line")}}),r.registEdge("arrow",{getPath:function(t){return i.getEdgePath("line",t,"line")},draw:function(t,e){return i.drawEdge("line",t,e,!0,"line")}}),r.registEdge("HV",{getPath:function(t){return i.getEdgePath("HV",t,"line")},draw:function(t,e){return i.drawEdge("HV",t,e,!1,"line",!1)}}),r.registEdge("VH",{getPath:function(t){return i.getEdgePath("VH",t,"line")},draw:function(t,e){return i.drawEdge("VH",t,e,!1,"line",!1)}}),r.registEdge("HVH",{getPath:function(t){return i.getEdgePath("HVH",t,"line")},draw:function(t,e){return i.drawEdge("HVH",t,e,!1,"line",!1)}}),r.registEdge("VHV",{getPath:function(t){return i.getEdgePath("VHV",t,"line")},draw:function(t,e){return i.drawEdge("VHV",t,e,!1,"line",!1)}}),r.registEdge("smooth",{getPath:function(t){return i.getEdgePath("bezierAuto",t,"curve")},draw:function(t,e){return i.drawEdge("bezierAuto",t,e,!1,"curve")}}),r.registEdge("smoothArrow",{getPath:function(t){return i.getEdgePath("bezierAuto",t,"curve")},draw:function(t,e){return i.drawEdge("bezierAuto",t,e,!0,"curve")}}),r.registEdge("bezierHorizontal",{getPath:function(t){return i.getEdgePath("bezierHorizontal",t,"curve")},draw:function(t,e){return i.drawEdge("bezierHorizontal",t,e,!1,"curve")}}),r.registEdge("bezierVertical",{getPath:function(t){return i.getEdgePath("bezierVertical",t,"curve")},draw:function(t,e){return i.drawEdge("bezierVertical",t,e,!1,"curve")}}),r.registEdge("bezierQuadratic",{getPath:function(t){return i.getEdgePath("bezierQuadratic",t,"curve")},draw:function(t,e){return i.drawEdge("bezierQuadratic",t,e,!1,"curve",!1)}})},function(t,e,n){"use strict";function i(){return[[.5,0],[1,.5],[.5,1],[0,.5]]}var r=n(3),o=n(29),a=.5/Math.sqrt(2);o.registGeom("node",{defaultShapeType:"rect",getAnchorPoints:function(t,e,n){var i=this.getShape(t);return!!r.isFunction(i.getAnchorPoints)&&i.getAnchorPoints(e,n)}}),o.registNode("rect",{draw:function(t,e){return r.drawNode("rect",t,e)},getAnchorPoints:i}),o.registNode("rhombus",{draw:function(t,e){return r.drawNode("rhombus",t,e)},getAnchorPoints:i}),o.registNode("text",{draw:function(t,e){return r.drawNode("text",t,e)},getAnchorPoints:i}),o.registNode("image",{draw:function(t,e){return r.drawNode("image",t,e)},getAnchorPoints:i}),o.registNode("html",{getHtml:function(t){return t.origin.html},cssSize:!1,draw:function(t,e){var n=r.createDOM('<div class="g6-html-node-container"></div>'),i=this.getHtml(t,e);return i=i?r.createDOM(i):r.createDOM("<div></div>"),n.appendChild(i),t.html=n,this.cssSize&&(t.size="auto"),r.drawNode("html",t,e)},getAnchorPoints:function(){return[[0,.25],[0,.5],[0,.75],[1,.25],[1,.5],[1,.75],[.25,0],[.5,0],[.75,0],[.25,1],[.5,1],[.75,1]]}}),o.registNode("circle",{draw:function(t,e){return r.drawNode("circle",t,e)},getAnchorPoints:function(){return[[.5-a,.5-a],[.5,0],[.5+a,.5-a],[1,.5],[.5+a,.5+a],[.5,1],[.5-a,.5+a],[0,.5]]}})},function(t,e,n){"use strict";var i=n(1),r={getDOMHeight:function(t){var e=i.getStyle(t,"height");return parseFloat(e)},getDOMWidth:function(t){var e=i.getStyle(t,"width");return parseFloat(e)},getOuterHeight:function(t){var e=i.getHeight(t),n=parseFloat(i.getStyle(t,"borderTopWidth"))||0,r=parseFloat(i.getStyle(t,"paddingTop")),o=parseFloat(i.getStyle(t,"paddingBottom")),a=parseFloat(i.getStyle(t,"borderBottomWidth"))||0;return e+n+a+r+o},getOuterWidth:function(t){var e=i.getWidth(t),n=parseFloat(i.getStyle(t,"borderLeftWidth"))||0,r=parseFloat(i.getStyle(t,"paddingLeft")),o=parseFloat(i.getStyle(t,"paddingRight")),a=parseFloat(i.getStyle(t,"borderRightWidth"))||0;return e+n+r+o+a},createDOM:function(t,e){var n=void 0;return n=i.isString(t)?i.createDom(t):t,n.bbox=n.getBoundingClientRect(),n.hide=function(){return n.style.visibility="hidden",n},n.show=function(){return n.style.visibility="visible",n},n.css=function(t){return i.modiCSS(n,t),n},n.outerWidth=function(){return r.getOuterWidth(n)},n.outerHeight=function(){return r.getOuterHeight(n)},n.width=function(){return r.getDOMWidth(n)},n.height=function(){return r.getDOMHeight(n)},n.paddingLeft=function(){return parseFloat(i.getStyle(n,"padding-left"))},n.paddingRight=function(){return parseFloat(i.getStyle(n,"padding-right"))},n.paddingTop=function(){return parseFloat(i.getStyle(n,"padding-top"))},n.paddingBottom=function(){return parseFloat(i.getStyle(n,"padding-bottom"))},n.destroy=function(){n.parentNode&&n.parentNode.removeChild(n)},n.on=function(t,e){n.addEventListener(t,e)},n.off=function(t,e){n.removeEventListener(t,e)},n.attr=function(t){return n.getAttribute(t)},n.css(e),n}};t.exports=r},function(t,e,n){"use strict";function i(t,e){return Math.abs(t.x-e.x)>Math.abs(t.y-e.y)}function r(t,e,n,r,o){var a=[];if("horizontal"===n)a.push({x:1*(t.x+e.x)/2,y:t.y}),a.push({x:1*(t.x+e.x)/2,y:e.y});else if("vertical"===n)a.push({x:t.x,y:1*(t.y+e.y)/2}),a.push({x:e.x,y:1*(t.y+e.y)/2});else{var s=Math.abs(e.x-t.x),u=Math.abs(e.y-t.y),c=t,h=e;r&&r.getCenter&&(c=r.getCenter()),o&&o.getCenter&&(h=o.getCenter()),i(t,c)||t===c&&u<s?a.push({x:1*(t.x+e.x)/2,y:t.y}):a.push({x:t.x,y:1*(t.y+e.y)/2}),i(e,h)||e===h&&u<s?a.push({x:1*(t.x+e.x)/2,y:e.y}):a.push({x:e.x,y:1*(t.y+e.y)/2})}return a}function o(t,e){var n={x:(t.x+e.x)/2,y:(t.y+e.y)/2},i=h.vector(e,t),r=i.vertical(),o=i.length();return r.setLength(.2*o),[f.add(n,r)]}function a(t,e,n,i){var o=t[0],a=t[t.length-1],s=["M",o.x,o.y],c=r(o,a,i,e,n),h=["C"],l=[s];return u.each(c,function(t){h.push(t.x,t.y)}),h.push(a.x,a.y),l.push(h),l}function s(t,e){var n=10,i=void 0,r=void 0,o=t.getBBox(),a=o.centerX,s=o.centerY,u=o.height,c=o.width,h=o.maxX,l=o.maxY;if(e=[e.x,e.y],a===e[0]&&(e[1]>=s?(i=n+u/2-Math.abs(s-e[1]),r=[a,e[1]+i]):(i=n+u/2-Math.abs(s-e[1]),r=[a,e[1]-i])),s===e[1]&&(e[0]>=a?(i=n+c/2-Math.abs(a-e[0]),r=[e[0]+i,s]):(i=n+c/2-Math.abs(a-e[0]),r=[e[0]-i,s])),r)return r;var d=Math.abs(a-e[0]),f=Math.abs(s-e[1]),g=Math.sqrt(Math.pow(d,2)+Math.pow(f,2)),p=180*Math.asin(f/g)/Math.PI;return e[0]>=a&&e[0]<=h?e[1]>=s&&e[1]<=l?p>0&&p<=45?(i=n+c/2-Math.abs(a-e[0]),r=[e[0]+i,e[1]]):(i=n+u/2-Math.abs(s-e[1]),r=[e[0],e[1]+i]):p>0&&p<=45?(i=n+c/2-Math.abs(a-e[0]),r=[e[0]+i,e[1]]):(i=n+u/2-Math.abs(s-e[1]),r=[e[0],e[1]-i]):e[1]>=s&&e[1]<=l?p>0&&p<=45?(i=n+c/2-Math.abs(a-e[0]),r=[e[0]-i,e[1]]):(i=n+u/2-Math.abs(s-e[1]),r=[e[0],e[1]+i]):p>0&&p<=45?(i=n+c/2-Math.abs(a-e[0]),r=[e[0]-i,e[1]]):(i=n+u/2-Math.abs(s-e[1]),r=[e[0],e[1]-i]),r}var u=n(1),c=n(4),h=n(31),l=n(18),d=n(144),f=c.Vector2,g={polyLineFlow:function(t,e,n){var i=s(e,t[0]),r=s(n,t[1]);n=n.get("boxStash"),e=e.get("boxStash");var o=new d({source:e,target:n,sourcePosition:[t[0].x,t[0].y],sourceHandlePosition:[i[0],i[1]],targetPosition:[t[1].x,t[1].y],targetHandlePosition:[r[0],r[1]]});return o=o.filter(function(t){return t}).map(function(t){return{x:t[0],y:t[1]}}),l.pointsToPolygon(o)},bezierHorizontal:function(t,e,n){return a(t,e,n,"horizontal")},bezierVertical:function(t,e,n){return a(t,e,n,"vertical")},bezierAuto:function(t,e,n){return a(t,e,n,"auto")},bezierQuadratic:function(t){var e=t[0],n=t[t.length-1],i=["M",e.x,e.y],r=o(e,n),a=["Q"],s=[i];return u.each(r,function(t){a.push(t.x,t.y)}),a.push(n.x,n.y),s.push(a),s},line:function(t){var e=l.pointsToPolygon(t);return e},HV:function(t){var e=t.length,n=l.pointsToPolygon([t[0],{x:t[e-1].x,y:t[0].y},t[e-1]]);return n},VH:function(t){var e=t.length,n=l.pointsToPolygon([t[0],{x:t[0].x,y:t[e-1].y},t[e-1]]);return n},HVH:function(t){var e=t.length,n=l.pointsToPolygon([t[0],{x:(t[0].x+t[e-1].x)/2,y:t[0].y},{x:(t[0].x+t[e-1].x)/2,y:t[e-1].y},t[e-1]]);return n},VHV:function(t){var e=t.length,n=l.pointsToPolygon([t[0],{x:t[0].x,y:(t[0].y+t[e-1].y)/2},{x:t[e-1].x,y:(t[0].y+t[e-1].y)/2},t[e-1]]);return n}};t.exports=g},function(t,e,n){"use strict";function i(t){var e=this,n=t.source,i=t.target,o=t.sourcePosition,a=t.targetPosition,s=t.sourceHandlePosition,u=t.targetHandlePosition,c=e.getMaxConflictArea(r.clone(s),r.clone(u),[n,i]),h=c.minCoor,l=c.maxCoor,d=e.getTurnPointGroup(r.clone(s),r.clone(u),[n,i],h,l);return d=[o,s].concat(d).concat([u,a])}var r=n(1),o=10;i.prototype={getTurnPointGroup:function(t,e,n,i,o){function a(t){return!s.isCrossNode(t[0],t[1],n)}for(var s=this,u=[],c=r.clone(t),h=r.clone(e),l=[{source:c,target:[c[0],i.y]},{source:c,target:[c[0],o.y]},{source:c,target:[i.x,c[1]]},{source:c,target:[o.x,c[1]]}],d=[{source:h,target:[h[0],i.y]},{source:h,target:[h[0],o.y]},{source:h,target:[i.x,h[1]]},{source:h,target:[o.x,h[1]]}],f=l,g=d,p=0;p<f.length;p++)for(var v=0;v<g.length;v++){var m=f[p],x=g[v],y=m.source[0],w=m.source[1],b=m.target[0],_=m.target[1],M=x.source[0],S=x.source[1],A=x.target[0],P=x.target[1],T=(y-b)*(S-P)-(w-_)*(M-A);if(T){var E=((y*_-w*b)*(M-A)-(y-b)*(M*P-S*A))/T,C=((y*_-w*b)*(S-P)-(w-_)*(M*P-S*A))/T,I=[E,C];if(!s.isCrossNode(c,I,n)&&!s.isCrossNode(I,h,n))return[[E,C]]}}if(!s.isCrossNode(c,h,n)&&(s.isEqual(c,h,0)||s.isEqual(c,h,1)))return[c,h];var k=0,B=0;if(r.each(n,function(t){k=Math.max(k,t.width),B=Math.max(B,t.height)}),c[1]===h[1])return[[c[0],c[1]+.8*B],[h[0],h[1]+.8*B]];if(c[0]===h[0])return[[c[0]+.8*k,c[1]],[h[0]+.8*k,h[1]]];for(var F=c[0]<h[0]?c[0]:h[0],N=c[0]>h[0]?c[0]:h[0],O=c[1]<h[1]?c[1]:h[1],R=c[1]>h[1]?c[1]:h[1],z=[],D=1/0,G=F;G<N;G++){var X=[G,c[1]],Y=[G,h[1]],j=[[c,X],[X,Y],[Y,h]].every(a);j&&z.push([X,Y])}if(z.length){for(var L=void 0,H=0;H<z.length;H++){var W=(F+N)/2,q=Math.min(D,Math.abs(W-z[H][0][0]));q!==D&&(L=z[H],D=q)}return L}for(var V=[],U=1/0,Z=O;Z<R;Z++){var Q=[c[0],Z],K=[h[0],Z],$=[[c,Q],[Q,K],[K,h]].every(a);$&&V.push([Q,K])}if(V.length){for(var J=void 0,tt=0;tt<V.length;tt++){var et=(O+R)/2,nt=Math.min(U,Math.abs(et-V[tt][0][1]));nt!==U&&(J=V[tt],U=nt)}return J}var it=[c[0],o.y],rt=[h[0],o.y],ot=[c[0],i.y],at=[h[0],i.y],st=[i.x,i.y],ut=[o.x,i.y],ct=[i.x,o.y],ht=[o.x,o.y];if(u=[[c,it],[it,rt],[rt,h]].every(a))return[it,rt];if(u=[[c,ot],[ot,at],[at,h]].every(a))return[ot,at];var lt=[it,rt,ot,at],dt=[st,ut,ct,ht],ft=s.loopFind(c,h,lt,dt,a);return ft?ft:(it=[i.x,c[1]],rt=[i.x,h[1]],ot=[o.x,c[1]],at=[o.x,h[1]],(u=[[c,it],[it,rt],[rt,h]].every(a))?[it,rt]:(u=[[c,ot],[ot,at],[at,h]].every(a))?[ot,at]:(lt=[it,rt,ot,at],(ft=s.loopFind(c,h,lt,dt,a))?ft:(it=[i.x,c[1]],rt=[h[0],o.y],ot=[o.x,c[1]],at=[h[0],i.y],lt=[it,rt,ot,at],(ft=s.loopFind(c,h,lt,dt,a))?ft:(it=[c[0],o.y],rt=[i.x,h[1]],ot=[c[0],i.y],at=[o.x,h[1]],lt=[it,rt,ot,at],ft=s.loopFind(c,h,lt,dt,a),ft?ft:void 0))))},loopFind:function(t,e,n,i,r){for(var o=this,a=0;a<n.length-1;a++)for(var s=1;s<n.length;s++)for(var u=0;u<i.length;u++)if((o.isEqual(t,n[a],0)||o.isEqual(t,n[a],1))&&(o.isEqual(e,n[s],0)||o.isEqual(e,n[s],1))&&(o.isEqual(n[a],i[u],0)||o.isEqual(n[a],i[u],1))&&(o.isEqual(n[s],i[u],0)||o.isEqual(n[s],i[u],1))){var c=[[t,n[a]],[n[a],i[u]],[i[u],n[s]],[n[s],e]].every(r);if(c)return[n[a],i[u],n[s]]}},getMaxConflictArea:function(t,e,n){function i(t){return t.x-o<=r&&t.x+t.width+o>=r&&(r=t.x-o),t.x-o<=a&&t.x+t.width+o>=a&&(a=t.x+t.width+o),t.y-o<=s&&t.y+t.height+o>=s&&(s=t.y-o),t.y-o<=u&&t.y+t.height+o>=u&&(u=t.y+t.height+o),t}for(var r=Math.min(t[0],e[0]),a=Math.max(e[0],t[0]),s=Math.min(t[1],e[1]),u=Math.max(e[1],t[1]),c=0;c<n.length;c++)n.map(i);return{minCoor:{x:r,y:s},maxCoor:{x:a,y:u}}},isEqual:function(t,e,n){return Math.abs(t[n]-e[n])<=1},isCrossNode:function(t,e,n){var i=this;return i.isEqual(t,e,0)?n.some(function(n){return n.x<=t[0]&&n.x+n.width>=t[0]&&(n.y>=t[1]&&n.y<=e[1]||n.y+n.height>=t[1]&&n.y+n.height<=e[1]||n.y<=t[1]&&n.y+n.height>=e[1]||n.y>=t[1]&&n.y+n.height<=e[1])}):i.isEqual(t,e,1)?n.some(function(n){return n.y<=t[1]&&n.y+n.height>=t[1]&&(n.x>=t[0]&&n.x<=e[0]||n.x+n.width>=t[0]&&n.x+n.width<=e[0]||n.x<=t[0]&&n.x+n.width>=e[0]||n.x>=t[0]&&n.x+n.width<=e[0])}):void 0}},t.exports=i},function(t,e,n){"use strict";function i(t,e){var n={};return n.arrow=e,t.color&&(n.stroke=t.color),t.size&&(n.lineWidth=t.size),o.mix({},l.edgeStyle,n,t.style)}function r(t,e,n){if(t.label){var i=void 0,r=void 0;try{i=n.getPoint(.5)}catch(t){}if(!i)return;r=o.isObject(t.label)?o.mix({},l.edgeLabelStyle,t.label,{x:i.x,y:i.y},t.labelStyle):o.mix({},l.edgeLabelStyle,{text:t.label,x:i.x,y:i.y},t.labelStyle);var a=u.drawLabel(e,r,l.zIndex.edgeLabel),s=a.getBBox(),c=s.maxX-s.minX,h=s.maxY-s.minY,d=c+2*f,g=h+2*f;e.addShape("rect",{attrs:o.mix({x:i.x-d/2,y:i.y-g/2,width:d,height:g},l.edgeLabelRectStyle),zIndex:l.zIndex.edgeLabelBackground})}}var o=n(1),a=n(4),s=n(18),u=n(30),c=n(64),h=n(143),l=n(7),d=a.Vector2,f=5,g={getEdgePath:function(t,e,n,i,r){return 2===e.length?h[t](e,i,r):"curve"===n?s.pointsToCurve(e):s.pointsToPolygon(e)},drawEdge:function(t,e,n,o,a){var s=i(e,o),u=g.getEdgePath(t,e.points,a,e.source,e.target);s.path=u;var c=n.addShape("path",{attrs:s,zIndex:l.zIndex.edge});return r(e,n,c),n.radixSort(),c},arrowTo:function(t,e,n,i,r,o,a){var s=new d(1,0),u=new d(o-i,a-r),c=u.angleTo(s,!0);return t.transform([["r",c],["t",e,n]]),t},snapPreciseAnchor:function(t,e){var n=e.getIntersectionByPath(t),i=c.getSnapAnchor(e,n);return i}};t.exports=g},function(t,e,n){"use strict";function i(t){return u.isObject(t.label)?u.mix({},c.nodeLabelStyle,t.label,{x:t.x,y:t.y}):u.mix({},c.nodeLabelStyle,{text:t.label,x:t.x,y:t.y})}function r(t,e){e.attr({y:e.attr("y")+t.attr("height")/2+f})}function o(t){var e=t.getBBox(),n=e.maxX-e.minX,i=e.maxY-e.minY,r=n+2*d[1],o=i+2*d[0];return[r,o]}function a(t,e,n){var r=void 0,a=void 0;return n=n?n:o,u.isNull(t.label)||(r=u.mix(i(t),t.labelStyle),a=l.drawLabel(e,r,c.zIndex.nodeLabel),t.size||(t.size=n(a))),t.size||(t.size=[g,g]),u.isNumber(t.size)&&(t.size=[t.size,t.size]),a}function s(t,e,n){var o={img:n},a=void 0;t.size||(t.size=g),o.width=u.isArray(t.size)?t.size[0]:t.size,o.height=u.isArray(t.size)?t.size[1]:t.size,o.x=t.x-o.width/2,o.y=t.y-o.height/2;var s=e.addShape("image",{attrs:o,zIndex:c.zIndex.node});if(t.label){var h=u.mix(i(t),t.labelStyle);h.textBaseline="top",a=l.drawLabel(e,h,c.zIndex.nodeLabel),r(s,a)}return s}var u=n(1),c=n(7),h=n(18),l=n(30),d=c.nodePadding,f=5,g=50,p={rect:function(t,e,n){a(t,e);var i=t.size[0],r=t.size[1],o=t.x-i/2,s=t.y-r/2,u=void 0;u=n.radius?h.getRectPath(o,s,i,r,n.radius):h.getRectPath(o,s,i,r);var c=e.addShape("path",{attrs:{path:u}});return c},circle:function(t,e){a(t,e,function(t){var e=t.getBBox(),n=e.maxX-e.minX+2*d[1],i=e.maxY-e.minY+2*d[0],r=void 0,o=void 0,a=void 0,s=(n+i/2)/2,u=Math.acos(n/2/s);return a=2*(Math.sin(u)*s),o=2*s,n<i&&(r=a,a=o,o=r),[o,a]});var n=t.size[0],i=t.size[1],r=e.addShape("path",{attrs:{path:h.getEllipsePath(t.x,t.y,n/2,i/2)}});return r},text:function(t,e){t.labelStyle&&!t.labelStyle.fill&&t.color&&(t.labelStyle.fill=t.color),t.color&&(t.labelStyle={fill:t.color}),t.size&&(u.isArray(t.size)&&(t.labelStyle={fontSize:Math.min(t.size[0],t.size[1])}),u.isNumber(t.size)&&(t.labelStyle={fontSize:t.size})),t.label||0===t.label||(t.label=" ");var n=a(t,e);return n},image:function(t,e){var n=t.shape,i=u.isArray(n)?n[1]:n;return s(t,e,i)},rhombus:function(t,e){a(t,e,function(t){var e=t.getBBox(),n=e.maxX-e.minX+2*d[1],i=e.maxY-e.minY+2*d[0],r=Math.sqrt(n/2*i/2),o=n+r,a=i+r;return[o,a]});var n=t.x,i=t.y,r=t.size[0],o=t.size[1],s=[{x:n,y:i-o/2},{x:n+r/2,y:i},{x:n,y:i+o/2},{x:n-r/2,y:i}],u=e.addShape("path",{attrs:{path:h.pointsToPolygon(s,!0)}});return u},html:function(t,e,n){if("auto"===t.size)return e.addShape("html",{attrs:u.mix({cx:t.x,cy:t.y,html:t.html},n),autoSize:!0});t.size||(t.size=[g,g]);var i=t.size[0],r=t.size[1],o=t.x-i/2,a=t.y-r/2;return e.addShape("html",{attrs:u.mix({x:o,y:a,width:i,height:r,html:t.html},n)})}};t.exports=p},function(t,e,n){"use strict";var i=n(2);i.clickActive=function(t){var e=void 0,n=void 0;t._on("itemclick",function(i){e=i.item,n=i.shape,n.get("clickActive")!==!1&&(t.clearAllActived(),t.setItemActived(e),t.refreshFront())})}},function(t,e,n){"use strict";var i=n(2),r=n(9);i.clickAddNode=function(t){r.addNode(t,"click")}},function(t,e,n){"use strict";var i=n(2);i.clickBlankClearActive=function(t){t._on("click",function(e){e.shape||(t.clearAllActived(),t.refreshFront())})}},function(t,e,n){"use strict";var i=n(2);i.clickNodeActive=function(t){var e=void 0,n=void 0;t._on("itemclick",function(i){e=i.item,n=i.shape,"node"===i.itemType&&n.get("clickActive")!==!1&&(t.clearAllActived(),t.setItemActived(e),t.refreshFront())})}},function(t,e,n){"use strict";var i=n(2),r=n(3);i.collapse=function(t){t._on("click",function(e){var n=e.shape;if(n&&n.hasClass("collapseButton")){var i=e.item.getModel();t.fire("beforecollapse",e),t.fire("collapse",e),t.fire("aftercollapse",r.mix({},e,{id:i.id})),t.css({cursor:"default"})}}),t._on("collapse",function(e){var n=t.get("dataMap"),i=e.item,r=i.get("id");n[r].isCollapsed=!0,t.clearAllActived(),t.refreshFront(),t.reRender();
 })}},function(t,e,n){"use strict";var i=n(2),r=n(9),o=n(3);i.dragAddEdge=function(t){function e(e){var n=e.item,i=t.get("addingType"),r=t.get("addingModel");if(t.fire("beforedragaddedge",e),n&&"edge"===i&&t.isNode(n)&&e.cancel!==!0)return r.source=n.get("id"),r.target=n.get("id"),t.addItem("edge",r)}function n(t,e){if(e)return 1}function i(e,n){o.objectToValues(n).length>0?(t.updateItem(e,n),t.updateRollback(),t.clearAllActived(),t.setItemActived(e),t.draw(!1),t.endAdd(e)):(t.removeItem(e),t.refreshFront(),t.endAdd())}r.dragEdgeExtremePoint(t,e,n,i)}},function(t,e,n){"use strict";var i=n(2),r=n(19);i.dragBlankX=function(t){r(t,!0,!0,!1)}},function(t,e,n){"use strict";var i=n(2),r=n(19);i.dragBlankY=function(t){r(t,!0,!1)}},function(t,e,n){"use strict";var i=n(2),r=n(3);i.dragEdgeEndHideAnchor=function(t){t._on("dragedgeend",function(t){r.isNode(t.item)&&t.item.hideAnchor()})}},function(t,e,n){"use strict";var i=n(2),r=n(9),o=n(3);i.dragEdge=function(t){function e(e){var n=e.shape,i=void 0;if(n&&n.hasClass("control-point")&&(i=n.get("item"),t.isEdge(i)))return i}function n(t,e){var n=t.shape,i=void 0;if(e&&(i=n.get("pointIndex"),e.isExtremePoint(i)))return i}function i(e,n){o.objectToValues(n).length>0?(t.updateItem(e,n),t.updateRollback(),t.draw(!1)):t.refreshFront()}r.dragEdgeExtremePoint(t,e,n,i)}},function(t,e,n){"use strict";var i=n(2);i.dragHideEdges=function(t){var e=t.get("edgeGroup");t._on("dragstart",function(){e.hide(),t.draw(!1)}),t._on("dragend",function(){e.show(),t.draw(!1)}),t._on("dommouseleave",function(){e.show(),t.draw(!1)})}},function(t,e,n){"use strict";var i=n(2),r=n(9);i.dragHideTexts=function(t){t._on("dragstart",function(){r.hideTexts(t)}),t._on("dragend",function(){r.showTexts(t)}),t._on("dommouseleave",function(){r.showTexts(t)})}},function(t,e,n){"use strict";var i=n(2);i.dragNodeEndHideAnchor=function(t){t._on("dragnodeend",function(t){1===t.dragItems.length?t.node.showAnchor():t.node.hideAnchor()})}},function(t,e,n){"use strict";var i=n(2);i.dragNodeEndSetActive=function(t){t._on("dragnodeend",function(e){1===e.dragItems.length&&(t.clearAllActived(),t.setItemActived(e.dragItems[0]))})}},function(t,e,n){"use strict";var i=n(1),r=n(2),o=n(9);r.dragNode=function(t){var e=t.get("gridAssist"),n=e&&e.forceAlign,r=t.get("behaviourSignal"),a=[],s=null,u=!1,c=void 0,h=void 0,l=void 0,d=void 0,f=void 0,g=void 0,p=void 0;t._on("mousedown",function(e){l=e.shape,h=e.item,!t.isNode(h)||l&&l.hasClass("control-point")||l&&l.hasClass("anchor-point")||(s={x:e.x,y:e.y},h.isActived()?(c=t._getAllActived(),i.each(c,function(t){a.push(t)})):a.push(h))}),t._on("dragmove",function(e){i.isArray(a)&&0!==a.length&&(u=!0,r.draggingNode=!0,i.each(a,function(n){t.isNode(n)&&(p=n.getBBox(),g={x:(p.x+p.maxX)/2,y:(p.y+p.maxY)/2},n.showDelegation({x:g.x+e.x-s.x,y:g.y+e.y-s.y}))}),t.refreshFront())}),t._on("mouseup",function(l){i.isArray(a)&&0!==a.length&&(u&&(h=l.item,a=i.filter(a,function(e){return t.isInGraph(e)}),i.each(a,function(r){t.isNode(r)?(g=r.getPosition(),d={x:g.x+l.x-s.x,y:g.y+l.y-s.y},h!==r&&r&&!r.hasClass("preventToFront")&&t.toFront(r),n&&o.alignPoint(d,e.cell),r.hideDelegation()):(f=r.getControlPoints(),d={},f.length>2&&(i.each(f,function(t,i){0!==i&&i!==f.length-1&&(t.x=t.x+l.x-s.x,t.y=t.y+l.y-s.y,n&&o.alignPoint(t,e.cell))}),d={controlPoints:f})),t.updateItem(r,d),t.isNode(r)&&t.fire("dragnodeend",{dragItems:a,node:r})}),t.updateRollback(),t.draw(!1)),s=null,h=void 0,g=void 0,f=void 0,c=void 0,d=void 0,a=[],u=!1,r.draggingNode=void 0)})}},function(t,e,n){"use strict";var i=n(2);i.hoverAnchorSetActived=function(t){var e=void 0;t._on("mouseenter",function(n){e=n.shape,e&&e.hasClass("anchor-point")&&t.setAnchorActived(e)}),t._on("mouseleave",function(n){e=n.shape,e&&e.hasClass("anchor-point")&&t.setAnchorUnActived(e)})}},function(t,e,n){"use strict";var i=n(2);i.hoverNodeShowAnchor=function(t){var e=t.get("behaviourSignal"),n=void 0;t._on("itemmouseenter",function(i){"node"!==i.itemType||e.draggingNode||(n=setTimeout(function(){!t.destroyed&&t.showAnchor(i.item)},200))}),t._on("itemmouseleave",function(e){"node"===e.itemType&&(clearTimeout(n),!t.destroyed&&t.hideAnchor(e.item))})}},function(t,e,n){"use strict";var i=n(2),r=n(9);i.mouseupAddNode=function(t){r.addNode(t,"mouseup")}},function(t,e,n){"use strict";var i=n(2),r=n(7),o=n(3);i.multiSelect=function(t){var e=t.get("frontCanvasRootGroup"),n=t.get("behaviourSignal"),i=!1,a=[],s=void 0,u=void 0,c=void 0,h=void 0,l=void 0,d=void 0,f=void 0,g=void 0,p=void 0,v=void 0,m=void 0;t._on("mousedown",function(t){h=t.item,l=t.shape,h||d||l||(f={x:t.x,y:t.y},d=e.addShape("rect",{attrs:r.frameRectStyle}),n.frameSelecting=!0)}),t._on("dragmove",function(e){d&&(g=Math.min(f.x,e.x),p=Math.min(f.y,e.y),v=Math.max(f.x,e.x),m=Math.max(f.y,e.y),d.attr({x:g,y:p,width:v-g,height:m-p}),t.refreshFront())}),t._on("mouseup",function(){d&&(s=t.get("itemCache"),o.each(s,function(e){"node"===e.get("type")?(u=e.getBBox(),c=[{x:u.x,y:u.y},{x:u.x,y:u.maxY},{x:u.maxX,y:u.y},{x:u.maxX,y:u.maxY}]):c=e.getControlPoints(),o.each(c,function(n,r){if(i=o.isInRect(n,g,p,v,m),t.isNode(e)){if(i)return a.push(e),!1}else{if(!i)return!1;r===c.length-1&&a.push(e)}})}),t.clearAllActived(),t.setItemsActived(a),d.remove(!0),t.refreshFront(),n.frameSelecting=void 0,h=void 0,d=void 0,f=void 0,g=void 0,p=void 0,v=void 0,m=void 0,a=[])})}},function(t,e,n){"use strict";var i=n(2),r=n(9),o=n(3);i.resizeEdge=function(t){var e=t.get("gridAssist"),n=e&&e.forceAlign,i=void 0,a=void 0,s=void 0,u=void 0,c=void 0,h=void 0,l=void 0,d=void 0,f=void 0,g=void 0,p=void 0,v=void 0;t._on("click",function(e){i=e.item,a=t.getActived(),v=e.shape,!t.isEdge(i)||i!==a||v&&v.hasClass("control-point")||(i.addControlPoint({x:e.x,y:e.y}),c=i.getControlPoints(),t.updateItem(i,{controlPoints:c}),t.updateRollback(),t.refreshFront())}),t._on("mousedown",function(e){if(v=e.shape,v&&v.hasClass("control-point")){if(s=v.get("item"),!t.isEdge(s))return void(s=void 0);if(g=v.get("pointIndex"),s.isExtremePoint(g))return s=void 0,void(g=void 0);u=v.get("point"),c=s.getControlPoints(),h=c[g-1],l=c[g+1]}}),t._on("dragmove",function(e){t.isEdge(s)&&(i=e.item,p={x:e.x,y:e.y,controlPointIndex:g},o.isInSegment(h,l,p)?p.stroke="red":p.stroke="blue",s.showDelegation(p),t.refreshFront())}),t._on("mouseup",function(m){t.isEdge(s)&&(i=m.item,d={x:m.x,y:m.y},f={},s.hideDelegation(),o.isInSegment(h,l,d)?c.splice(g,1):0!==g&&g!==c.length-1&&(u.x=d.x,u.y=d.y,n&&r.alignPoint(u,e.cell),f.controlPoints=c),t.updateItem(s,f),t.updateRollback(),t.draw(!1),i=void 0,a=void 0,s=void 0,u=void 0,c=void 0,h=void 0,l=void 0,d=void 0,f=void 0,g=void 0,p=void 0,v=void 0)})}},function(t,e,n){"use strict";var i=n(2),r=n(9);i.resizeNode=function(t){var e=t.get("behaviourSignal"),n=!1,i=void 0,o=void 0,a=void 0,s=void 0,u=void 0,c=void 0,h=void 0;t._on("mousedown",function(t){i=t.shape,i&&i.hasClass("control-point")&&(u=i.get("item"),c=i.get("point"),h=i.get("pointIndex"))}),t._on("dragmove",function(i){t.isNode(u)&&(n=!0,e.resizingNode=!0,o={x:i.x,y:i.y},s=r.getControlInfo(o,h,c,u,"frontCanvas"),a=s.size,a[0]>5&&a[1]>5&&(u.showDelegation(s),t.refreshFront()))}),t._on("mouseup",function(l){t.isNode(u)&&(n&&(o={x:l.x,y:l.y},s=r.getControlInfo(o,h,c,u),a=s.size,a[0]>5&&a[1]>0&&(t.updateItem(u,s),t.updateRollback()),u.hideDelegation(),t.draw(!1)),e.resizingNode=void 0,i=void 0,o=void 0,a=void 0,s=void 0,u=void 0,c=void 0,n=!1,h=void 0)})}},function(t,e,n){"use strict";var i=n(2);i.shortcut=function(t){var e=!1;t._on("keydown",function(n){if(32===n.keyCode){if(e)return;e=!0,"drag"===t.get("mode")?t.changeMode("edit"):t.changeMode("drag"),e=!0}return n.metaKey&&67===n.keyCode?void t.copy():n.metaKey&&86===n.keyCode?void t.paste():n.metaKey&&n.altKey&&90===n.keyCode?void t.redo():n.metaKey&&90===n.keyCode?void t.updo():n.ctrlKey&&67===n.keyCode?void t.copy():n.ctrlKey&&86===n.keyCode?void t.paste():n.ctrlKey&&n.altKey&&90===n.keyCode?void t.redo():n.ctrlKey&&90===n.keyCode?void t.updo():8===n.keyCode||46===n.keyCode?void t.del():void 0}),t._on("keyup",function(){e=!1})}},function(t,e,n){"use strict";var i=n(2),r=n(3);i.spreadout=function(t){t._on("click",function(e){var n=e.shape;if(n&&n.hasClass("spreadoutButton")){var i=e.item.getModel();t.fire("beforespreadout",e),t.fire("spreadout",e),t.fire("afterspreadout",r.mix({},e,{id:i.id})),t.css({cursor:"default"})}}),t._on("spreadout",function(e){var n=t.get("dataMap"),i=e.item,r=i.get("id");n[r].isCollapsed=!1,t.clearAllActived(),t.refreshFront(),t.reRender()})}},function(t,e,n){"use strict";var i=n(2),r=n(9);i.wheelZoomAutoTexts=function(t){t.on("afterdrawinner",function(){r.autoTexts(t)}),t.on("wheelzoomend",function(){r.autoTexts(t)}),t.on("itemmouseenter",function(e){"node"===e.itemType&&(r.showText(e.item),t.draw(!1))}),t.on("itemmouseleave",function(e){if("node"===e.itemType){var n=e.item.getGroup();n.traverseChildren(function(t){var e=t.get("autoTextHide");"text"===t.type&&e!==!1&&t.hide()}),t.draw(!1)}})}},function(t,e,n){"use strict";var i=n(2),r=n(9);i.onWheelZoomEdges=function(t){var e=t.get("edgeGroup");r.onWheelZoom(t,function(){e.hide(),t.draw(!1)},function(){e.show(),t.draw(!1)})}},function(t,e,n){"use strict";var i=n(2),r=n(9);i.onWheelZoomTexts=function(t){r.onWheelZoom(t,function(){r.hideTexts(t)},function(){r.showTexts(t)})}},function(t,e,n){"use strict";var i=n(1),r=n(71),o=function(t){i.mix(this,t),this._init()};i.extend(o,r),i.augment(o,{step:0,margin:0,valueField:"..value",_init:function(){var t=this.edges.slice(0);this.edges=t,t.map(function(t){return t["..value"]=1,!0}),this._initNode()},_calculateStep:function(){var t=this,e=t.nodes,n=t.stepField;if(i.isNull(e[0][n])){var r=e.filter(function(t){return 0===t.inEdges.length});0===r.length&&(r=[e[0]]),t._setNodesStep(r)}e.map(function(e){return void 0===e.step&&(e.step=t.step,t.step=t.step+1,t._setNodesStep([e])),!0})},_setNodesStep:function(t){var e=this,n=e.step,r=e.stepField,o=t.filter(function(t){return i.isNull(t[r])});if(o.length>0){o.map(function(t){return t[r]=n,!0}),e.step=n+1;var a=e._getNextNodes(o);a.length>0&&e._setNodesStep(a)}},_getNextNodes:function(t){var e=this,n=e.targetField,r=e.stepField,o=[];return t.forEach(function(t){t.outEdges.length>0&&t.outEdges.forEach(function(a){var s=a[n];if(s!==t.id){var u=e._findObj(s);i.isNull(u[r])&&o.push(u)}})}),o},_calculateValue:function(){var t=this,e=t.nodes,n=t.valueField;e.map(function(t){return t[n]=1,!0})},_layoutByWeight:function(t){var e=t.length,n=1/e,i=this.y,r=this;t.map(function(t,e){return t.x=(e+.5)*n,t.y=void 0===t.y?i:t.y,r.onNodeChange(t.id,{x:t.x,y:t.y}),!0})},_layoutHighStep:function(t,e){var n=this,i=n.y,r=e===n.sourceField?n.targetField:n.sourceField;t.map(function(t){var o=n._getEdgeOfCurNode(t,r),a=0,s=void 0,u=0,c=e===n.sourceField?t.step-1:t.step+1;return o.forEach(function(t){s=n._findObj(t[e]),s.step===c&&(u++,a+=s.x)}),t.x=a/u,t.y=void 0===t.y?i:t.y,n.onNodeChange(t.id,{x:t.x,y:t.y}),!0})},_layoutNodes:function(t,e){var n=this;if(t.length>=2){var i=void 0;for(i=1;i<t.length;i++)n.y=i/(n.totalStep-1),n._layoutHighStep(t[i],e),t[i].sort(function(t,e){return t.x-e.x}),n._layoutByWeight(t[i])}},onNodeChange:function(){},getNodes:function(){var t=o.superclass.getNodes.call(this),e=this.stepField,n=this.valueField;return t.map(function(t){return delete t.inEdges,delete t.outEdges,delete t[e],delete t[n],!0}),t},start:function(){this.getNodes()}}),t.exports=o},function(t,e,n){"use strict";var i=n(1),r=n(175),o=function(t){i.mix(this,t),this._init()};i.augment(o,{graph:null,stiffness:200,repulsion:400,minEnergyThreshold:.01,damping:.3,_init:function(){var t=this,e={nodes:[],edges:[]};i.each(t.nodes,function(t){e.nodes.push(t.id)}),i.each(t.edges,function(t){e.edges.push([t.source,t.target])});var n=new r.Graph,o=new r.Layout.ForceDirected(n,this.stiffness,this.repulsion,this.damping,this.minEnergyThreshold),a=new r.Renderer(o,function(){},function(){},function(e,n){t.onNodeChange(e.id,n)},function(){t.onFinish()},function(){t.onStart()});n.loadJSON(e),this.layout=o,this.renderer=a},onNodeChange:function(){},onEdgeChange:function(){},onClear:function(){},onFinish:function(){},onStart:function(){},start:function(){this.renderer.start()}}),t.exports=o},function(t,e){"use strict";var n={},i=n.Vector=function(t,e){this.x=t,this.y=e},r=function(t){for(var e in t)if(t.hasOwnProperty(e))return!1;return!0},o=n.Graph=function(){this.nodeSet={},this.nodes=[],this.edges=[],this.adjacency={},this.nextNodeId=0,this.nextEdgeId=0,this.eventListeners=[]},a=n.Node=function(t,e){this.id=t,this.data=void 0!==e?e:{}},s=n.Edge=function(t,e,n,i){this.id=t,this.source=e,this.target=n,this.data=void 0!==i?i:{}};o.prototype.addNode=function(t){return t.id in this.nodeSet||this.nodes.push(t),this.nodeSet[t.id]=t,this.notify(),t},o.prototype.addNodes=function(){for(var t=0;t<arguments.length;t++){var e=arguments[t],n=new a(e,{label:e});this.addNode(n)}},o.prototype.addEdge=function(t){var e=!1;return this.edges.forEach(function(n){t.id===n.id&&(e=!0)}),e||this.edges.push(t),t.source.id in this.adjacency||(this.adjacency[t.source.id]={}),t.target.id in this.adjacency[t.source.id]||(this.adjacency[t.source.id][t.target.id]=[]),e=!1,this.adjacency[t.source.id][t.target.id].forEach(function(n){t.id===n.id&&(e=!0)}),e||this.adjacency[t.source.id][t.target.id].push(t),this.notify(),t},o.prototype.addEdges=function(){for(var t=0;t<arguments.length;t++){var e=arguments[t],n=this.nodeSet[e[0]];if(void 0===n)throw new TypeError("invalid node name: "+e[0]);var i=this.nodeSet[e[1]];if(void 0===i)throw new TypeError("invalid node name: "+e[1]);var r=e[2];this.newEdge(n,i,r)}},o.prototype.newNode=function(t){var e=new a(this.nextNodeId++,t);return this.addNode(e),e},o.prototype.newEdge=function(t,e,n){var i=new s(this.nextEdgeId++,t,e,n);return this.addEdge(i),i},o.prototype.loadJSON=function(t){("string"==typeof t||t instanceof String)&&(t=JSON.parse(t)),("nodes"in t||"edges"in t)&&(this.addNodes.apply(this,t.nodes),this.addEdges.apply(this,t.edges))},o.prototype.getEdges=function(t,e){return t.id in this.adjacency&&e.id in this.adjacency[t.id]?this.adjacency[t.id][e.id]:[]},o.prototype.removeNode=function(t){t.id in this.nodeSet&&delete this.nodeSet[t.id];for(var e=this.nodes.length-1;e>=0;e--)this.nodes[e].id===t.id&&this.nodes.splice(e,1);this.detachNode(t)},o.prototype.detachNode=function(t){var e=this.edges.slice();e.forEach(function(e){e.source.id!==t.id&&e.target.id!==t.id||this.removeEdge(e)},this),this.notify()},o.prototype.removeEdge=function(t){for(var e=this.edges.length-1;e>=0;e--)this.edges[e].id===t.id&&this.edges.splice(e,1);for(var n in this.adjacency){for(var i in this.adjacency[n]){for(var o=this.adjacency[n][i],a=o.length-1;a>=0;a--)this.adjacency[n][i][a].id===t.id&&this.adjacency[n][i].splice(a,1);0===this.adjacency[n][i].length&&delete this.adjacency[n][i]}r(this.adjacency[n])&&delete this.adjacency[n]}this.notify()},o.prototype.merge=function(t){var e=[];t.nodes.forEach(function(t){e.push(this.addNode(new a(t.id,t.data)))},this),t.edges.forEach(function(t){var n=e[t.from],i=e[t.to],r=void 0;r=t.directed?r=t.type+"-"+n.id+"-"+i.id:n.id<i.id?t.type+"-"+n.id+"-"+i.id:t.type+"-"+i.id+"-"+n.id;var o=this.addEdge(new s(r,n,i,t.data));o.data.type=t.type},this)},o.prototype.filterNodes=function(t){var e=this.nodes.slice();e.forEach(function(e){t(e)||this.removeNode(e)},this)},o.prototype.filterEdges=function(t){var e=this.edges.slice();e.forEach(function(e){t(e)||this.removeEdge(e)},this)},o.prototype.addGraphListener=function(t){this.eventListeners.push(t)},o.prototype.notify=function(){this.eventListeners.forEach(function(t){t.graphChanged()})};var u=n.Layout={};u.ForceDirected=function(t,e,n,i,r){this.graph=t,this.stiffness=e,this.repulsion=n,this.damping=i,this.minEnergyThreshold=r||.01,this.nodePoints={},this.edgeSprings={}},u.ForceDirected.prototype.point=function(t){if(!(t.id in this.nodePoints)){var e=void 0!==t.data.mass?t.data.mass:1;this.nodePoints[t.id]=new u.ForceDirected.Point(i.random(),e)}return this.nodePoints[t.id]},u.ForceDirected.prototype.spring=function(t){if(!(t.id in this.edgeSprings)){var e=void 0!==t.data.length?t.data.length:1,n=!1,i=this.graph.getEdges(t.source,t.target);if(i.forEach(function(t){n===!1&&t.id in this.edgeSprings&&(n=this.edgeSprings[t.id])},this),n!==!1)return new u.ForceDirected.Spring(n.point1,n.point2,0,0);if(i.forEach(function(t){n===!1&&t.id in this.edgeSprings&&(n=this.edgeSprings[t.id])},this),n!==!1)return new u.ForceDirected.Spring(n.point2,n.point1,0,0);this.edgeSprings[t.id]=new u.ForceDirected.Spring(this.point(t.source),this.point(t.target),e,this.stiffness)}return this.edgeSprings[t.id]},u.ForceDirected.prototype.eachNode=function(t){var e=this;this.graph.nodes.forEach(function(n){t.call(e,n,e.point(n))})},u.ForceDirected.prototype.eachEdge=function(t){var e=this;this.graph.edges.forEach(function(n){t.call(e,n,e.spring(n))})},u.ForceDirected.prototype.eachSpring=function(t){var e=this;this.graph.edges.forEach(function(n){t.call(e,e.spring(n))})},u.ForceDirected.prototype.applyCoulombsLaw=function(){this.eachNode(function(t,e){this.eachNode(function(t,n){if(e!==n){var i=e.p.subtract(n.p),r=i.magnitude()+.1,o=i.normalise();e.applyForce(o.multiply(this.repulsion).divide(r*r*.5)),n.applyForce(o.multiply(this.repulsion).divide(r*r*-.5))}})})},u.ForceDirected.prototype.applyHookesLaw=function(){this.eachSpring(function(t){var e=t.point2.p.subtract(t.point1.p),n=t.length-e.magnitude(),i=e.normalise();t.point1.applyForce(i.multiply(t.k*n*-.5)),t.point2.applyForce(i.multiply(t.k*n*.5))})},u.ForceDirected.prototype.attractToCentre=function(){this.eachNode(function(t,e){var n=e.p.multiply(-1);e.applyForce(n.multiply(this.repulsion/50))})},u.ForceDirected.prototype.updateVelocity=function(t){this.eachNode(function(e,n){n.v=n.v.add(n.a.multiply(t)).multiply(this.damping),n.a=new i(0,0)})},u.ForceDirected.prototype.updatePosition=function(t){this.eachNode(function(e,n){n.p=n.p.add(n.v.multiply(t))})},u.ForceDirected.prototype.totalEnergy=function(){var t=0;return this.eachNode(function(e,n){var i=n.v.magnitude();t+=.5*n.m*i*i}),t};var c=function(t,e){return function(){return t.apply(e,arguments)}};n.requestAnimationFrame=c(window.requestAnimationFrame||window.webkitRequestAnimationFrame||window.mozRequestAnimationFrame||window.oRequestAnimationFrame||window.msRequestAnimationFrame||function(t){window.setTimeout(t,10)},void 0),u.ForceDirected.prototype.start=function(t,e,i){var r=this;this._started||(this._started=!0,this._stop=!1,void 0!==i&&i(),n.requestAnimationFrame(function i(){r.tick(.03),void 0!==t&&t(),r._stop||r.totalEnergy()<r.minEnergyThreshold?(r._started=!1,void 0!==e&&e()):n.requestAnimationFrame(i)}))},u.ForceDirected.prototype.stop=function(){this._stop=!0},u.ForceDirected.prototype.tick=function(t){this.applyCoulombsLaw(),this.applyHookesLaw(),this.attractToCentre(),this.updateVelocity(t),this.updatePosition(t)},u.ForceDirected.prototype.nearest=function(t){var e={node:null,point:null,distance:null},n=this;return this.graph.nodes.forEach(function(i){var r=n.point(i),o=r.p.subtract(t).magnitude();(null===e.distance||o<e.distance)&&(e={node:i,point:r,distance:o})}),e},u.ForceDirected.prototype.getBoundingBox=function(){var t=new i(-2,-2),e=new i(2,2);this.eachNode(function(n,i){i.p.x<t.x&&(t.x=i.p.x),i.p.y<t.y&&(t.y=i.p.y),i.p.x>e.x&&(e.x=i.p.x),i.p.y>e.y&&(e.y=i.p.y)});var n=e.subtract(t).multiply(.07);return{bottomleft:t.subtract(n),topright:e.add(n)}},i.random=function(){return new i(10*(Math.random()-.5),10*(Math.random()-.5))},i.prototype.add=function(t){return new i(this.x+t.x,this.y+t.y)},i.prototype.subtract=function(t){return new i(this.x-t.x,this.y-t.y)},i.prototype.multiply=function(t){return new i(this.x*t,this.y*t)},i.prototype.divide=function(t){return new i(this.x/t||0,this.y/t||0)},i.prototype.magnitude=function(){return Math.sqrt(this.x*this.x+this.y*this.y)},i.prototype.normal=function(){return new i(-this.y,this.x)},i.prototype.normalise=function(){return this.divide(this.magnitude())},u.ForceDirected.Point=function(t,e){this.p=t,this.m=e,this.v=new i(0,0),this.a=new i(0,0)},u.ForceDirected.Point.prototype.applyForce=function(t){this.a=this.a.add(t.divide(this.m))},u.ForceDirected.Spring=function(t,e,n,i){this.point1=t,this.point2=e,this.length=n,this.k=i};var h=n.Renderer=function(t,e,n,i,r,o){this.layout=t,this.clear=e,this.drawEdge=n,this.drawNode=i,this.onRenderStop=r,this.onRenderStart=o,this.layout.graph.addGraphListener(this)};h.prototype.graphChanged=function(){this.start()},h.prototype.start=function(){var t=this;this.layout.start(function(){t.clear(),t.layout.eachEdge(function(e,n){t.drawEdge(e,n.point1.p,n.point2.p)}),t.layout.eachNode(function(e,n){t.drawNode(e,n.p)})},this.onRenderStop,this.onRenderStart)},h.prototype.stop=function(){this.layout.stop()},t.exports=n},function(t,e){"use strict";function n(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}function i(t,e,n){n?(e.x=t.x,e.y=t.y):(e.x=t.y,e.y=t.x),t.children.forEach(function(t,r){i(t,e.children[r],n)})}var r=Object.assign||function(t){for(var e=1;e<arguments.length;e++){var n=arguments[e];for(var i in n)Object.prototype.hasOwnProperty.call(n,i)&&(t[i]=n[i])}return t},o=function t(e){var i=arguments.length>1&&void 0!==arguments[1]?arguments[1]:[];n(this,t);var r=this;r.x=r.y=0,r.leftChild=r.rightChild=null,r.height=e||0,r.children=i},a={isHorizontal:!0,nodeSep:20,nodeSize:20,rankSep:200,subTreeSep:10};t.exports=function(t){function e(t){if(!t)return null;t.width=0,t.depth&&t.depth>c&&(c=t.depth);var n=t.children,i=n.length,r=new o(t.height,[]);return n.forEach(function(t,n){var o=e(t);r.children.push(o),0===n&&(r.leftChild=o),n===i-1&&(r.rightChild=o)}),r.originNode=t,r.isLeaf=t.isLeaf(),r}function n(t){if(t.isLeaf||0===t.children.length)t.drawingDepth=c;else{var e=t.children.map(function(t){return n(t)}),i=Math.min.apply(null,e);t.drawingDepth=i-1}return t.drawingDepth}function s(t){t.x=t.drawingDepth*u.rankSep,t.isLeaf?(t.y=0,h&&(t.y=h.y+h.height+u.nodeSep,t.originNode.parent!==h.originNode.parent&&(t.y+=u.subTreeSep)),h=t):(t.children.forEach(function(t){s(t)}),t.y=(t.leftChild.y+t.rightChild.y)/2)}var u=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};u=r({},a,u);var c=0,h=void 0,l=e(t);return n(l),s(l),i(l,t,u.isHorizontal),t}},function(t,e){"use strict";function n(t,e,n){t.x+=n*t.depth,t.y=e?e.y+e.height:0}var i=20;t.exports=function(t){var e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:i,r=null;t.eachNode(function(t){n(t,r,e),r=t})}},function(t,e,n){"use strict";function i(t,e){for(var n=Object.getOwnPropertyNames(e),i=0;i<n.length;i++){var r=n[i],o=Object.getOwnPropertyDescriptor(e,r);o&&o.configurable&&void 0===t[r]&&Object.defineProperty(t,r,o)}return t}function r(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}function o(t,e){if(!t)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!e||"object"!=typeof e&&"function"!=typeof e?t:e}function a(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Super expression must either be null or a function, not "+typeof e);t.prototype=Object.create(e&&e.prototype,{constructor:{value:t,enumerable:!1,writable:!0,configurable:!0}}),e&&(Object.setPrototypeOf?Object.setPrototypeOf(t,e):i(t,e))}var s=n(14),u=n(72),c=n(32),h=function(t){function e(){return r(this,e),o(this,t.apply(this,arguments))}return a(e,t),e.prototype.execute=function(){t.prototype._prepareRoot.call(this);var e=this;return e.options.forceAlign="R",c(e.rootNode,e.options,u)},e}(s);t.exports=h},function(t,e){"use strict";t.exports={T:{x:.5,y:0},R:{x:1,y:.5},B:{x:.5,y:1},L:{x:0,y:.5},C:null}},function(t,e){"use strict";t.exports=["LR","RL","TB","BT","H","V"]},function(t,e){"use strict";t.exports=["LR","RL","H","L","R"]},function(t,e){"use strict";t.exports=18},function(t,e,n){"use strict";function i(t,e){for(var n=Object.getOwnPropertyNames(e),i=0;i<n.length;i++){var r=n[i],o=Object.getOwnPropertyDescriptor(e,r);o&&o.configurable&&void 0===t[r]&&Object.defineProperty(t,r,o)}return t}function r(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}function o(t,e){if(!t)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!e||"object"!=typeof e&&"function"!=typeof e?t:e}function a(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Super expression must either be null or a function, not "+typeof e);t.prototype=Object.create(e&&e.prototype,{constructor:{value:t,enumerable:!1,writable:!0,configurable:!0}}),e&&(Object.setPrototypeOf?Object.setPrototypeOf(t,e):i(t,e))}var s=n(14),u=n(176),c=n(32),h=function(t){function e(){return r(this,e),o(this,t.apply(this,arguments))}return a(e,t),e.prototype.execute=function(){t.prototype._prepareRoot.call(this);var e=this,n=e.rootNode,i=e.options;return n.width=0,c(n,i,u),n},e}(s);t.exports=h},function(t,e,n){"use strict";function i(t,e){for(var n=Object.getOwnPropertyNames(e),i=0;i<n.length;i++){var r=n[i],o=Object.getOwnPropertyDescriptor(e,r);o&&o.configurable&&void 0===t[r]&&Object.defineProperty(t,r,o)}return t}function r(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}function o(t,e){if(!t)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!e||"object"!=typeof e&&"function"!=typeof e?t:e}function a(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Super expression must either be null or a function, not "+typeof e);t.prototype=Object.create(e&&e.prototype,{constructor:{value:t,enumerable:!1,writable:!0,configurable:!0}}),e&&(Object.setPrototypeOf?Object.setPrototypeOf(t,e):i(t,e))}var s=n(14),u=n(177),c=n(74),h=n(73),l=["LR","RL","H"],d=l[0],f=function(t){function e(){return r(this,e),o(this,t.apply(this,arguments))}return a(e,t),e.prototype.execute=function(){t.prototype._prepareRoot.call(this);var e=this,n=e.rootNode,i=e.options;i.isHorizontal=!0;var r=i.indent;e.options.forceAlign="R";var o=i.direction||d;if(o&&l.indexOf(o)===-1)throw new TypeError("Invalid direction: "+o);if(o===l[0])u(n,r),c(n,"L","L",i);else if(o===l[1])u(n,r),n.right2left(),c(n,"R","R",i);else if(o===l[2]){var a=h(n,i),s=a.left,f=a.right;u(s,r),s.right2left(),c(s,"R","R",i),u(f,r),c(f,"L","L",i);var g=s.getBoundingBox();f.translate(g.width,0),n.x=f.x-n.width/2,c(n,"B","B",i,!0)}return n.eachNode(function(t){var e=t.data;e.x=t.x+t.width/2+t.hgap,e.y=t.y+t.height/2+t.vgap,e.align=t.align,e.inAnchor=t.inAnchor?[t.inAnchor.x,t.inAnchor.y]:null,e.outAnchor=t.outAnchor?[t.outAnchor.x,t.outAnchor.y]:null}),n},e}(s);t.exports=f},function(t,e,n){"use strict";function i(t,e){for(var n=Object.getOwnPropertyNames(e),i=0;i<n.length;i++){var r=n[i],o=Object.getOwnPropertyDescriptor(e,r);o&&o.configurable&&void 0===t[r]&&Object.defineProperty(t,r,o)}return t}function r(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}function o(t,e){if(!t)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!e||"object"!=typeof e&&"function"!=typeof e?t:e}function a(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Super expression must either be null or a function, not "+typeof e);t.prototype=Object.create(e&&e.prototype,{constructor:{value:t,enumerable:!1,writable:!0,configurable:!0}}),e&&(Object.setPrototypeOf?Object.setPrototypeOf(t,e):i(t,e))}var s=Object.assign||function(t){for(var e=1;e<arguments.length;e++){var n=arguments[e];for(var i in n)Object.prototype.hasOwnProperty.call(n,i)&&(t[i]=n[i])}return t},u=n(33),c=n(14),h=n(72),l=n(32),d={nodeSize:20,nodeSep:20,rankSep:200},f=function(t){function e(){return r(this,e),o(this,t.apply(this,arguments))}return a(e,t),e.prototype.execute=function(){t.prototype._prepareRoot.call(this);var e=this,n=s({},d,e.options),i=n.nodeSize||d.nodeSize,r=n.nodeSep||d.nodeSep,o=n.rankSep||d.rankSep;e.rootNode=new u(e.root,s(n,{getWidth:function(){return i},getHeight:function(){return i},getHGap:function(){return o},getVGap:function(){return r}}));var a=e.rootNode;return l(a,n,h),a},e}(c);t.exports=f},function(t,e){"use strict";var n={R:"L",L:"R",T:"B",B:"T"};t.exports=function(t){return n[t]}},function(t,e){"use strict";t.exports=function(t,e,n){if(!(e>=n)){var i=t.splice(e,1)[0];t.splice(n,0,i)}}},function(t,e){"use strict";t.exports=function(t,e,n){if(!(e<=n)){var i=t.splice(e,1)[0];t.splice(n-1,0,i)}}},function(t,e,n){"use strict";var i=n(181);t.exports=function(t){return i.indexOf(t)>-1}},function(t,e,n){"use strict";n(65),n(147),n(150),n(148),n(164),n(149),n(152),n(67),n(153),n(154),n(19),n(156),n(155),n(157),n(158),n(161),n(159),n(162),n(163),n(165),n(166),n(167),n(168),n(68),n(171),n(172),n(160),n(66),n(170)},function(t,e,n){"use strict";var i=n(1),r=n(13),o=r.Util,a={max:5,current:0,cache:[]},s={nodes:[],edges:[]},u=function(){};u.ATTRS={clipboard:!1,rollback:!1},i.augment(u,{_initEditor:function(){var t=this.get("rollback"),e=this.get("clipboard");t&&(i.isObject(t)?this.set("rollback",i.mix({},a,t)):this.set("rollback",i.clone(a))),e&&this.set("clipboard",i.clone(s))},_changeData:function(t,e){this._clearInner(),this._initData(),this.source(t,e),this.render(!1)},updateRollback:function(){var t=this.get("rollback");if(i.isObject(t)){var e=t.current,n=t.cache,r=t.max,o=n.length,a=this.save().source;n.splice(0,e,a),o>r&&n.splice(r,o-r+1),t.current=0}},copy:function(){var t=this,e=t.getAllActived(),n=t.get("clipboard"),r={},a=void 0,s=void 0,u=void 0;n.nodes=[],n.edges=[],i.each(e,function(c){a=i.mix(!0,{},c.get("model"),{id:o.guid()}),r[c.get("model").id]=a.id,t.isNode(c)?(a.x+=10,a.y-=10,n.nodes.push(a)):(s=c.get("model").target,u=c.get("model").source,s=t.find(s),u=t.find(u),e.indexOf(s)!==-1&&e.indexOf(u)!==-1&&(a.controlPoints&&i.each(a.controlPoints,function(t,e){a.controlPoints[e]={x:t.x+=10,y:t.y-=10}}),a.target=r[a.target],a.source=r[a.source],n.edges.push(a)))}),this.refresh()},paste:function(){var t=this,e=t.get("clipboard"),n=t._addNodes(e.nodes);n=n.concat(t._addEdges(e.edges)),t.clearAllActived(),t.setItemsActived(n),e.nodes=[],e.edges=[],t.updateRollback(),this.refresh()},del:function(){var t=this,e=t.getAllActived();i.each(e,function(e){t.removeItem(e)}),this.updateRollback(),this.refresh()},undo:function(){var t=this.get("rollback");if(i.isObject(t)){var e=t.cache,n=t.current,r=n+1,o=e[r];0!==e.length&&o&&(o=i.clone(o),this._changeData(o.nodes,o.edges),t.current=r,this.refresh())}},updo:function(){this.undo()},redo:function(){var t=this.get("rollback");if(i.isObject(t)){var e=t.cache,n=t.current,r=n-1,o=e[r];0!==e.length&&o&&(o=i.clone(o),this._changeData(o.nodes,o.edges),t.current=r,this.refresh())}},beginAdd:function(t,e){this.changeMode("add"),this.set("addingType",t),this.set("addingModel",e)},endAdd:function(t){this.changeMode("edit"),this.set("addingType",""),this.set("addingModel",null),t&&this.fire("afteradd",{item:t})}}),t.exports=u},function(t,e,n){"use strict";var i=n(193);n(190),i.Mode={default:["dragNode","dragEdge","dragBlank","clickBlankClearActive","resizeEdge","clickActive","resizeNode","wheelZoom","dragNodeEndSetActive","clickFocus"],edit:["dragNode","dragEdge","clickBlankClearActive","resizeEdge","clickActive","dragNodeEndSetActive","multiSelect","resizeNode","shortcut","wheelZoom","hoverNodeShowAnchor","hoverAnchorSetActived","dragEdgeEndHideAnchor","dragNodeEndHideAnchor","clickFocus"],drag:["shortcut","dragCanvas","wheelZoom","clickFocus"],add:["clickAddNode","dragAddEdge","hoverAnchorSetActived","hoverNodeShowAnchor","clickFocus"],complicated:["dragCanvas","wheelZoom","dragHideEdges","wheelZoomHideEdges","clickFocus"],analysis:["dragCanvas","wheelZoom","dragHideEdges","wheelZoomAutoTexts","wheelZoomHideEdges","wheelZoomHideTexts","clickFocus"],none:[]},t.exports=i},function(t,e,n){"use strict";var i=n(1),r=n(191),o=n(13),a=function t(e){t.superclass.constructor.call(this,e)};a.ATTRS={
 defaultNodeShape:"rect",layoutEdgeFilter:null,layoutNodeFilter:null},i.extend(a,o),i.mixin(a,[r]),i.augment(a,{_initCfg:function(){var t=this.get("mode");"analysis"===t&&(this.set("useAnchor",!1),this.set("useFreezeSizeGroup",!0),this.set("useEdgeSortGroup",!1),this.set("grid",null)),"edit"===t&&(this.set("wheelScaleLimit",[.5,4]),this.set("rollback",!0),this.set("clipboard",!0)),a.superclass._initCfg.call(this)},_readSource:function(t){this.source(t.nodes,t.edges)},source:function(t,e){i.isObject(t)?(this.set("nodes",t.nodes),this.set("edges",t.edges)):(this.set("nodes",t),this.set("edges",e))},_saveSource:function(){function t(t,e){i.each(t.get("children"),function(t){var n=t.get("id"),i=s[n];e.push(i.get("model"))})}var e=this,n=[],r=[],o=e.get("nodeGroup"),a=e.get("edgeGroup"),s=e.get("itemCache");return t(o,n),t(a,r),i.clone({nodes:n,edges:r})},getLayoutNodes:function(){var t=this.getNodes(function(t){return t.getModel()}),e=this.get("layoutNodeFilter");return e?i.filter(t,e):t},getLayoutEdges:function(){var t=this.getEdges(function(t){return t.getModel()}),e=this.get("layoutEdgeFilter");return e?i.filter(t,e):t},layout:function t(){var t=this.get("layout"),e=this.getLayoutNodes(),n=this.getLayoutEdges();i.isObject(t)?(t.nodes=e,t.edges=n,t.graphHeight=this.get("height"),t.graphWidth=this.get("width"),t.execute()):i.isFunction(t)&&t(e,n),this.updateNodesPosition()},changeLayout:function(t){this.set("layout",t),this.layout()},render:function(t){void 0===t&&(t=this.get("rollback")),a.superclass.render.call(this),t!==!1&&this.updateRollback()},add:function(t,e){var n=this,i=void 0;return"node"===t?i=n._addNodes([e]):"edge"===t&&(i=n._addEdges([e])),this.draw(),i[0]},update:function(t,e){this.updateItem(t,e),this.draw()},remove:function(t){this.removeItem(t),this.draw()}}),t.exports=a},function(t,e,n){"use strict";var i=n(59),r=n(75),o={g6:!0,version:r,page_type:"syslog"};setTimeout(function(){if(i.tracking){var t=new i;t.log(o)}},100),t.exports=o},function(t,e,n){"use strict";n(67),n(151),n(169),n(65),n(68)},function(t,e,n){"use strict";var i=n(13),r=n(197);n(195),r.Mode={default:["dragBlank","collapse","spreadout","buttonPointer","wheelZoom","clickFocus"],none:[]},i.registNode("tree-node",{style:function(){return{fillOpacity:1}}},"rect"),t.exports=r},function(t,e,n){"use strict";var i=n(1),r=n(69),o=n(24),a=n(198),s=n(7),u=n(13),c=o.Util,h=u.Util,l=function t(e){t.superclass.constructor.call(this,e)};l.ATTRS={layoutFn:r.CompactBoxTree,layoutCfg:{direction:"LR",getHGap:function(){return 40},getVGap:function(){return 10}},layout:null,grid:null,data:null,dataMap:null,showButton:!0,defaultNodeShape:"tree-node",animate:!0},i.extend(l,u),i.augment(l,{_readSource:function(t){this.source(t)},_saveSource:function(){var t=this.get("data"),e=a.clone(t,{parent:!0});return e},_createMap:function(t){var e={};return a.traverseTree(t,function(n,i){n.id||(n.id=h.guid()),i?n.parent=i:t.root=!0,e[n.id]=n}),e},layout:function t(){var t=this.get("layout"),e=this.get("data");e&&(i.isObject(t)?t.execute():i.isFunction(t)&&t(e),this.updateNodesPosition())},source:function(t){if(t){var e=this._createMap(t),n=this.get("layout"),r=void 0,o=void 0;i.isObject(n)?(n.root=t,r=n.getNodes(),o=n.getEdges()):(r=[],o=[],a.traverseTree(t,function(t,e){r.push(t),e&&o.push({id:e.id+"-"+t.id,source:e.id,target:t.id})},function(t){return t.isCollapsed})),this.set("dataMap",e),this.set("nodes",r),this.set("edges",o)}this.set("data",t)},reRender:function(){var t=this.get("data");this.clearAllActived(),this.refreshFront(),this._clearInner(),this._initData(),this.source(t),this._drawInner(),this.draw()},enterAnimate:function(t,e,n){var i=h.getBBox(t,t),r=i.centerX,o=i.centerY,s=t.get("shapeCfg"),u=s.origin,l=void 0;l="node"===t.get("type")?a.getButtonPoint(u,e,r,o):a.getButtonPoint(n[u.target].model,e,r,o),c.scaleIn(t,l.x,l.y,r,o)},leaveAnimate:function(t,e,n){var i=h.getBBox(t,t),r=i.centerX,o=i.centerY,s=t.get("shapeCfg"),u=s.origin,l=void 0;l="node"===t.get("type")?a.getButtonPoint(u,n,r,o):a.getButtonPoint(e[u.target].model,n,r,o),c.scaleOut(t,l.x,l.y)},beforeNodeDraw:function(t){var e=this,n=t.getShapeCfg(),r=e.get("layout");i.isObject(r)&&(n.direction=r.options.direction),t.addChild=function(n){return e.add(t.get("id"),n)}},afterNodeDraw:function(t){var e=this.get("showButton"),n=t.get("group"),i=t.getShapeCfg(),r=t.getKeyShape(),o=t.get("shapeObj"),u=i.origin,c=r.getBBox(),l=u.inAnchor,d=u.outAnchor,f=void 0;if(l){o.getAnchorPoints=function(){return[l,d]};var g=t.calculateAnchorPoints(c);if(!u.root&&g){switch(f=h.getpointInRectQuadrant(c,g[1])){case 0:i.buttonX=g[1].x,i.buttonY=g[1].y-s.treeButtonRadius;break;case 1:i.buttonX=g[1].x+s.treeButtonRadius,i.buttonY=g[1].y;break;case 2:i.buttonX=g[1].x,i.buttonY=g[1].y+s.treeButtonRadius;break;case 3:i.buttonX=g[1].x-s.treeButtonRadius,i.buttonY=g[1].y;break;default:i.buttonX=g[1].x,i.buttonY=g[1].y}if(u.isCollapsed?i.buttonType="plus":i.buttonType="minus",!e)return n.set("buttonX",(c.minX+c.maxX)/2),void n.set("buttonY",(c.minY+c.maxY)/2);u.children&&0!==u.children.length&&a.drawButton(i,n),n.set("buttonX",i.buttonX),n.set("buttonY",i.buttonY)}}},changeLayout:function(t){this.set("layout",t),this.reRender()},add:function(t,e){var n=this.get("dataMap"),r=n[t],o=e.id;return o||(o=i.guid(),e.id=o),i.isArray(r.children)?r.children.push(e):r.children=[e],this.reRender(),this.find(o)},remove:function(t){var e=this.get("dataMap"),n=void 0;i.isString(t)&&(t=e[t]);var r=t.parent;return r?(n=r.children,r.children=i.filter(n,function(e){return t!==e})):this.source({}),this.reRender(),this},update:function(t,e){return l.superclass.updateItem.call(this,t,e),this.reRender(),t},_checkData:function(t){return t&&i.isObject(t)&&h.objectToValues(t).length>0}}),t.exports=l},function(t,e,n){"use strict";var i="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t},r=n(1),o=n(13),a=n(7),s=o.Util,u={traverseTree:function(t,e,n,i){var o=t.children;e(t,i),n&&n(t)||o&&r.each(o,function(i){u.traverseTree(i,e,n,t)})},getButtonPoint:function(t,e,n,i){for(var r=t.parent,o=void 0;t&&r&&!e[r.id];)r=r.parent;return r?(o=e[r.id].origin,s.applyPoint({x:o.get("buttonX"),y:o.get("buttonY")},o)):{x:n,y:i}},clone:function(t,e){var n=void 0;if(r.isArray(t)){n=[];for(var o=0,a=t.length;o<a;o++)"object"===i(t[o])&&null!==t[o]?n[o]=u.clone(t[o],e):n[o]=t[o]}else{n={};for(var s in t)e[s]||("object"===i(t[s])&&null!==t[s]?n[s]=u.clone(t[s],e):n[s]=t[s])}return n},drawButton:function(t,e){"plus"===t.buttonType?u.drawspreadoutButton(t.buttonX,t.buttonY,a.treeButtonRadius,a.treeButtonPadding,e):u.drawcollapseButton(t.buttonX,t.buttonY,a.treeButtonRadius,a.treeButtonPadding,e)},drawspreadoutButton:function(t,e,n,i,o){var s=n-i,u=o.addShape("path",{attrs:r.mix({},{path:[["M",0,0-n],["a",n,n,0,1,1,0,2*n],["a",n,n,0,1,1,0,-2*n],["z"],["M",0-s,0],["L",0+s,0],["M",0,0-s],["L",0,0+s]]},a.treeButtonStyle),clickActive:!1,class:"spreadoutButton"});return u.translate(t,e),u},drawcollapseButton:function(t,e,n,i,o){var s=n-i,u=o.addShape("path",{attrs:r.mix({},{path:[["M",0,0-n],["a",n,n,0,1,1,0,2*n],["a",n,n,0,1,1,0,-2*n],["z"],["M",0-s,0],["L",0+s,0]]},a.treeButtonStyle),clickActive:!1,class:"collapseButton"});return u.translate(t,e),u}};t.exports=u}])});
-},{}],8:[function(require,module,exports) {
+},{}],5:[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -113,6 +113,7 @@ function getArcCenter(node1, node2) {
   let ang = 0.5 * Math.PI + Math.atan2(c.dy, c.dx);
 
   return function (vol) {
+    vol = vol / (1 - Math.sin(ang));
     let [x, y] = [c.x - vol * Math.cos(ang), c.y - Math.sin(ang) * vol];
     let ang2 = Math.atan2(Math.sqrt(c.dx ** 2 + c.dy ** 2) / 2, vol);
     let r = Math.sqrt((node1.x - x) ** 2 + (node1.y - y) ** 2);
@@ -249,7 +250,7 @@ function regsLine(g6) {
           p3: [cfg.points[1].x, cfg.points[1].y],
           stroke: cfg.color,
           lineWidth: cfg.size,
-          label: 'some'
+          arrow: true
         }
       });
     }
@@ -257,6 +258,14 @@ function regsLine(g6) {
 }
 
 function regrLine(g6) {
+  let stateMap = {
+    10: '#aa3333',
+    8: '#aa5511',
+    70: '#dd1166',
+    40: '#33aa33',
+    60: '#3333aa'
+
+  };
   let edgeMap = {};
   let pre = [];
   let cleanEdgeMap = () => {
@@ -303,7 +312,7 @@ function regrLine(g6) {
       edgeMap[n1s][n2s] = 0;
     }
 
-    return p(600 - 100 * n);
+    return p(100 * n);
   };
 
   g6.registEdge('rline', {
@@ -336,7 +345,8 @@ function regrLine(g6) {
             r: p1[2],
             startAngle: start,
             endAngle: end,
-            stroke: '#66ccff'
+            stroke: '#66ccff',
+            arrow: true
           }
         });
       }
@@ -362,7 +372,8 @@ function regrLine(g6) {
           r: p1[2],
           startAngle: start,
           endAngle: end,
-          stroke: cfg.color
+          stroke: stateMap[cfg.source._attrs.model.origin.status],
+          arrow: true
         }
       });
     }
@@ -374,38 +385,1609 @@ const out = {
 };
 
 exports.default = out;
-},{}],9:[function(require,module,exports) {
+},{}],3:[function(require,module,exports) {
+
+/*
+edgeList: 边数据集合
+edge: 
+	"id": id
+	"uniqueId": 唯一id，同一个uniqueId可以会存在2个id的边，一个是运行状态，一个是非运行状态
+	"elementType": 固定值"E"
+	"status": 状态值，不同状态值显示不同颜色
+	"type": 边的名称
+	"source": 起点的id,
+	"target": 终点的id,
+	"graphId": 所属图的id
+
+node:
+	"id": id
+	"uniqueId": 唯一id，同一个uniqueId可以会存在2个id的边，一个是运行状态，一个是非运行状态
+	"elementType": 固定值"N"
+	"status": 状态值，不同状态值显示不同颜色
+	"type": 点的名称
+	"graphId": 所属图的id
+其他没有提到的字段可以暂时不用关注。
+状态枚举：
+	10: 草稿
+	8: 已提交
+	70: 已验证
+	40: 待发布
+	60: 正式运行
+	只有待发布和正式运行的节点间才可以创建边。
+*/
+
+const data = {
+  "edgeList": [{
+    "rate": 0,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 12,
+    "type": "medium_merchant_id2user_id_offline",
+    "target": 13,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "商户2PARTENER",
+    "gmtCreate": "2018-04-03 14:42:00",
+    "id": 84,
+    "status": 60,
+    "uniqueId": 84
+  }, {
+    "rate": 0,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2phone_no_offline",
+    "target": 18,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "user2phone",
+    "gmtCreate": "2018-04-03 14:45:59",
+    "id": 85,
+    "status": 60,
+    "uniqueId": 85
+  }, {
+    "rate": 0,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2cert_no_offline",
+    "target": 14,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "user2cert",
+    "gmtCreate": "2018-04-03 15:39:36",
+    "id": 86,
+    "status": 60,
+    "uniqueId": 86
+  }, {
+    "rate": 0,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 12,
+    "type": "medium_merchant_id2license_number_offline",
+    "target": 15,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "merchant2license",
+    "gmtCreate": "2018-04-03 16:16:01",
+    "id": 87,
+    "status": 60,
+    "uniqueId": 87
+  }, {
+    "rate": 0,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2wx_qq_offline",
+    "target": 20,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "user2wxqq",
+    "gmtCreate": "2018-04-03 16:47:32",
+    "id": 88,
+    "status": 60,
+    "uniqueId": 88
+  }, {
+    "rate": 0,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2web_url_offline",
+    "target": 21,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "user2url",
+    "gmtCreate": "2018-04-04 10:06:02",
+    "id": 89,
+    "status": 60,
+    "uniqueId": 89
+  }, {
+    "rate": 0,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2isv_pid_offline",
+    "target": 19,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "user2isv_pid",
+    "gmtCreate": "2018-04-04 10:07:08",
+    "id": 90,
+    "status": 60,
+    "uniqueId": 90
+  }, {
+    "rate": 0,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2bank_card_no_offline",
+    "target": 16,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "user2bank_card",
+    "gmtCreate": "2018-04-04 10:09:05",
+    "id": 91,
+    "status": 60,
+    "uniqueId": 91
+  }, {
+    "rate": 0,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2receiver_card_no_offline",
+    "target": 29,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "user2receiver",
+    "gmtCreate": "2018-04-04 10:34:52",
+    "id": 92,
+    "status": 60,
+    "uniqueId": 92
+  }, {
+    "rate": -4,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2umid_login",
+    "target": 22,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "user2umin_login",
+    "gmtCreate": "2018-04-04 11:22:46",
+    "id": 93,
+    "status": 60,
+    "uniqueId": 93
+  }, {
+    "rate": -3,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2umid_maintrade",
+    "target": 22,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "user2umid_maintrade",
+    "gmtCreate": "2018-04-04 11:24:20",
+    "id": 94,
+    "status": 60,
+    "uniqueId": 94
+  }, {
+    "rate": -2,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2umid_highrisk",
+    "target": 22,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2umid_highrisk",
+    "gmtCreate": "2018-04-04 11:25:27",
+    "id": 95,
+    "status": 60,
+    "uniqueId": 95
+  }, {
+    "rate": -1,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2umid_trade",
+    "target": 22,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2umid_trade",
+    "gmtCreate": "2018-04-04 11:26:30",
+    "id": 96,
+    "status": 60,
+    "uniqueId": 96
+  }, {
+    "rate": 0,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2umid_tenant",
+    "target": 22,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2umid_tenant",
+    "gmtCreate": "2018-04-04 11:28:59",
+    "id": 97,
+    "status": 60,
+    "uniqueId": 97
+  }, {
+    "rate": 1,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2umid_otherpay",
+    "target": 22,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2umid_otherpay",
+    "gmtCreate": "2018-04-04 11:30:02",
+    "id": 98,
+    "status": 60,
+    "uniqueId": 98
+  }, {
+    "rate": 2,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2umid_auth",
+    "target": 22,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2umid_auth",
+    "gmtCreate": "2018-04-04 11:31:03",
+    "id": 99,
+    "status": 60,
+    "uniqueId": 99
+  }, {
+    "rate": 3,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2umid_register",
+    "target": 22,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2umid_register",
+    "gmtCreate": "2018-04-04 11:31:49",
+    "id": 100,
+    "status": 60,
+    "uniqueId": 100
+  }, {
+    "rate": -4,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2tid_login",
+    "target": 23,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2tid_login",
+    "gmtCreate": "2018-04-04 11:33:01",
+    "id": 101,
+    "status": 60,
+    "uniqueId": 101
+  }, {
+    "rate": -3,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2tid_maintrade",
+    "target": 23,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2tid_maintrade",
+    "gmtCreate": "2018-04-04 11:33:51",
+    "id": 102,
+    "status": 60,
+    "uniqueId": 102
+  }, {
+    "rate": -2,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2tid_highrisk",
+    "target": 23,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2tid_highrisk",
+    "gmtCreate": "2018-04-04 11:34:36",
+    "id": 103,
+    "status": 60,
+    "uniqueId": 103
+  }, {
+    "rate": -1,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2tid_trade",
+    "target": 23,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2tid_trade",
+    "gmtCreate": "2018-04-04 11:35:26",
+    "id": 104,
+    "status": 60,
+    "uniqueId": 104
+  }, {
+    "rate": 0,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2tid_tenant",
+    "target": 23,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2tid_tenant",
+    "gmtCreate": "2018-04-04 11:36:32",
+    "id": 105,
+    "status": 60,
+    "uniqueId": 105
+  }, {
+    "rate": 1,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2tid_otherpay",
+    "target": 23,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2tid_otherpay",
+    "gmtCreate": "2018-04-04 11:37:22",
+    "id": 106,
+    "status": 60,
+    "uniqueId": 106
+  }, {
+    "rate": 2,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2tid_auth",
+    "target": 23,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2tid_auth",
+    "gmtCreate": "2018-04-04 11:38:07",
+    "id": 107,
+    "status": 60,
+    "uniqueId": 107
+  }, {
+    "rate": 3,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2tid_register",
+    "target": 23,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2tid_register",
+    "gmtCreate": "2018-04-04 11:38:55",
+    "id": 108,
+    "status": 60,
+    "uniqueId": 108
+  }, {
+    "rate": -4,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2imei_login",
+    "target": 24,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2imei_login",
+    "gmtCreate": "2018-04-04 11:39:38",
+    "id": 109,
+    "status": 60,
+    "uniqueId": 109
+  }, {
+    "rate": -3,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2imei_maintrade",
+    "target": 24,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2imei_maintrade",
+    "gmtCreate": "2018-04-04 11:40:45",
+    "id": 110,
+    "status": 60,
+    "uniqueId": 110
+  }, {
+    "rate": -2,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2imei_highrisk",
+    "target": 24,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2imei_highrisk",
+    "gmtCreate": "2018-04-04 11:41:27",
+    "id": 111,
+    "status": 60,
+    "uniqueId": 111
+  }, {
+    "rate": -1,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2imei_trade",
+    "target": 24,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2imei_trade",
+    "gmtCreate": "2018-04-04 11:42:18",
+    "id": 112,
+    "status": 60,
+    "uniqueId": 112
+  }, {
+    "rate": 0,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2imei_tenant",
+    "target": 24,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2imei_tenant",
+    "gmtCreate": "2018-04-04 11:42:58",
+    "id": 113,
+    "status": 60,
+    "uniqueId": 113
+  }, {
+    "rate": 1,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2imei_otherpay",
+    "target": 24,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2imei_otherpay",
+    "gmtCreate": "2018-04-04 11:45:07",
+    "id": 114,
+    "status": 60,
+    "uniqueId": 114
+  }, {
+    "rate": 2,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2imei_auth",
+    "target": 24,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2imei_auth",
+    "gmtCreate": "2018-04-04 11:45:50",
+    "id": 115,
+    "status": 60,
+    "uniqueId": 115
+  }, {
+    "rate": 3,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2imei_register",
+    "target": 24,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2imei_register",
+    "gmtCreate": "2018-04-04 11:46:41",
+    "id": 116,
+    "status": 60,
+    "uniqueId": 116
+  }, {
+    "rate": -4,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2sim_login",
+    "target": 25,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2sim_login",
+    "gmtCreate": "2018-04-04 11:47:20",
+    "id": 117,
+    "status": 60,
+    "uniqueId": 117
+  }, {
+    "rate": -3,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2sim_maintrade",
+    "target": 25,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2sim_maintrade",
+    "gmtCreate": "2018-04-04 11:48:08",
+    "id": 118,
+    "status": 60,
+    "uniqueId": 118
+  }, {
+    "rate": -2,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2sim_highrisk",
+    "target": 25,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2sim_highrisk",
+    "gmtCreate": "2018-04-04 11:49:06",
+    "id": 119,
+    "status": 60,
+    "uniqueId": 119
+  }, {
+    "rate": -1,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2sim_trade",
+    "target": 25,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2sim_trade",
+    "gmtCreate": "2018-04-04 11:49:55",
+    "id": 120,
+    "status": 60,
+    "uniqueId": 120
+  }, {
+    "rate": 0,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2sim_tenant",
+    "target": 25,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2sim_tenant",
+    "gmtCreate": "2018-04-04 11:50:34",
+    "id": 121,
+    "status": 60,
+    "uniqueId": 121
+  }, {
+    "rate": 1,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2sim_otherpay",
+    "target": 25,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2sim_otherpay",
+    "gmtCreate": "2018-04-04 11:51:16",
+    "id": 122,
+    "status": 60,
+    "uniqueId": 122
+  }, {
+    "rate": 2,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2sim_auth",
+    "target": 25,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2sim_auth",
+    "gmtCreate": "2018-04-04 11:51:58",
+    "id": 123,
+    "status": 60,
+    "uniqueId": 123
+  }, {
+    "rate": 3,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2sim_register",
+    "target": 25,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2sim_register",
+    "gmtCreate": "2018-04-04 11:52:40",
+    "id": 124,
+    "status": 60,
+    "uniqueId": 124
+  }, {
+    "rate": -4,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2apdid_login",
+    "target": 26,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2apdid_login",
+    "gmtCreate": "2018-04-04 11:53:24",
+    "id": 125,
+    "status": 60,
+    "uniqueId": 125
+  }, {
+    "rate": -3,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2apdid_maintrade",
+    "target": 26,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2apdid_maintrade",
+    "gmtCreate": "2018-04-04 11:55:56",
+    "id": 126,
+    "status": 60,
+    "uniqueId": 126
+  }, {
+    "rate": -2,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2apdid_highrisk",
+    "target": 26,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2apdid_highrisk",
+    "gmtCreate": "2018-04-04 11:56:39",
+    "id": 127,
+    "status": 60,
+    "uniqueId": 127
+  }, {
+    "rate": -1,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2apdid_trade",
+    "target": 26,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2apdid_trade",
+    "gmtCreate": "2018-04-04 11:57:21",
+    "id": 128,
+    "status": 60,
+    "uniqueId": 128
+  }, {
+    "rate": 0,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2apdid_tenant",
+    "target": 26,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2apdid_tenant",
+    "gmtCreate": "2018-04-04 11:58:34",
+    "id": 129,
+    "status": 60,
+    "uniqueId": 129
+  }, {
+    "rate": 1,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2apdid_otherpay",
+    "target": 26,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2apdid_otherpay",
+    "gmtCreate": "2018-04-04 11:59:12",
+    "id": 130,
+    "status": 60,
+    "uniqueId": 130
+  }, {
+    "rate": 2,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2apdid_auth",
+    "target": 26,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2apdid_auth",
+    "gmtCreate": "2018-04-04 11:59:51",
+    "id": 131,
+    "status": 60,
+    "uniqueId": 131
+  }, {
+    "rate": 3,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2apdid_register",
+    "target": 26,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2apdid_register",
+    "gmtCreate": "2018-04-04 12:00:45",
+    "id": 132,
+    "status": 60,
+    "uniqueId": 132
+  }, {
+    "rate": -4,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2ip3_wifi_login",
+    "target": 27,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2ip3_wifi_login",
+    "gmtCreate": "2018-04-04 12:01:26",
+    "id": 133,
+    "status": 60,
+    "uniqueId": 133
+  }, {
+    "rate": -3,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2ip3_wifi_maintrade",
+    "target": 27,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2ip3_wifi_maintrade",
+    "gmtCreate": "2018-04-04 12:02:05",
+    "id": 134,
+    "status": 60,
+    "uniqueId": 134
+  }, {
+    "rate": -2,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2ip3_wifi_highrisk",
+    "target": 27,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2ip3_wifi_highrisk",
+    "gmtCreate": "2018-04-04 13:17:49",
+    "id": 135,
+    "status": 60,
+    "uniqueId": 135
+  }, {
+    "rate": -1,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2ip3_wifi_trade",
+    "target": 27,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2ip3_wifi_trade",
+    "gmtCreate": "2018-04-04 13:18:35",
+    "id": 136,
+    "status": 60,
+    "uniqueId": 136
+  }, {
+    "rate": 0,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2ip3_wifi_tenant",
+    "target": 27,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2ip3_wifi_tenant",
+    "gmtCreate": "2018-04-04 13:19:24",
+    "id": 137,
+    "status": 60,
+    "uniqueId": 137
+  }, {
+    "rate": 1,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2ip3_wifi_otherpay",
+    "target": 27,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2ip3_wifi_otherpay",
+    "gmtCreate": "2018-04-04 13:35:26",
+    "id": 138,
+    "status": 60,
+    "uniqueId": 138
+  }, {
+    "rate": 2,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2ip3_wifi_auth",
+    "target": 27,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2ip3_wifi_auth",
+    "gmtCreate": "2018-04-04 13:36:07",
+    "id": 139,
+    "status": 60,
+    "uniqueId": 139
+  }, {
+    "rate": 3,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2ip3_wifi_register",
+    "target": 27,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2ip3_wifi_register",
+    "gmtCreate": "2018-04-04 13:36:59",
+    "id": 140,
+    "status": 60,
+    "uniqueId": 140
+  }, {
+    "rate": -4,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2ip_login",
+    "target": 28,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2ip_login",
+    "gmtCreate": "2018-04-04 13:37:59",
+    "id": 141,
+    "status": 60,
+    "uniqueId": 141
+  }, {
+    "rate": -3,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2ip_maintrade",
+    "target": 28,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2ip_maintrade",
+    "gmtCreate": "2018-04-04 13:38:42",
+    "id": 142,
+    "status": 60,
+    "uniqueId": 142
+  }, {
+    "rate": -2,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2ip_highrisk",
+    "target": 28,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2ip_highrisk",
+    "gmtCreate": "2018-04-04 13:39:26",
+    "id": 143,
+    "status": 60,
+    "uniqueId": 143
+  }, {
+    "rate": -1,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2ip_trade",
+    "target": 28,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2ip_trade",
+    "gmtCreate": "2018-04-04 13:40:12",
+    "id": 144,
+    "status": 60,
+    "uniqueId": 144
+  }, {
+    "rate": 0,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2ip_tenant",
+    "target": 28,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2ip_tenant",
+    "gmtCreate": "2018-04-04 13:40:53",
+    "id": 145,
+    "status": 60,
+    "uniqueId": 145
+  }, {
+    "rate": 1,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2ip_otherpay",
+    "target": 28,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2ip_otherpay",
+    "gmtCreate": "2018-04-04 13:41:34",
+    "id": 146,
+    "status": 60,
+    "uniqueId": 146
+  }, {
+    "rate": 2,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2ip_auth",
+    "target": 28,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2ip_auth",
+    "gmtCreate": "2018-04-04 13:42:18",
+    "id": 147,
+    "status": 60,
+    "uniqueId": 147
+  }, {
+    "rate": 3,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 13,
+    "type": "medium_user_id2ip_register",
+    "target": 28,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_user_id2ip_register",
+    "gmtCreate": "2018-04-04 13:42:59",
+    "id": 148,
+    "status": 60,
+    "uniqueId": 148
+  }, {
+    "rate": 0,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 12,
+    "type": "medium_merchant_id2web_url_offline",
+    "target": 21,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_merchant_id2web_url_offline",
+    "gmtCreate": "2018-04-13 11:58:45",
+    "id": 149,
+    "status": 60,
+    "uniqueId": 149
+  }, {
+    "rate": 0,
+    "elementType": "E",
+    "directed": "Y",
+    "update": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"src\",\"propName\":\"src_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dst\",\"propName\":\"dst_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"srcType\",\"propName\":\"src_type\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"dstType\",\"propName\":\"dst_type\",\"propOnLine\":1}]",
+    "ttl": "30d",
+    "graphId": 5,
+    "online": 1,
+    "source": 12,
+    "type": "medium_merchant_id2wx_qq_offline",
+    "target": 20,
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "medium_merchant_id2wx_qq_offline",
+    "gmtCreate": "2018-04-13 11:59:44",
+    "id": 152,
+    "status": 60,
+    "uniqueId": 152
+  }],
+  "nodeList": [{
+    "relateNodeCnt": 64,
+    "elementType": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"id\",\"propName\":\"node_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"分值 0 白/1 黑\",\"propName\":\"black_score\",\"propOnLine\":1}]",
+    "graphId": 5,
+    "online": 1,
+    "type": "medium_user_id",
+    "owner": "",
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "用户ID",
+    "gmtCreate": "2018-04-03 14:00:39",
+    "id": 13,
+    "status": 60,
+    "uniqueId": 13
+  }, {
+    "relateNodeCnt": 8,
+    "elementType": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"id\",\"propName\":\"node_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"分值 0 白/1 黑\",\"propName\":\"black_score\",\"propOnLine\":1}]",
+    "graphId": 5,
+    "online": 1,
+    "type": "medium_umid",
+    "owner": " ",
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "umid",
+    "gmtCreate": "2018-04-03 14:26:10",
+    "id": 22,
+    "status": 60,
+    "uniqueId": 22
+  }, {
+    "relateNodeCnt": 8,
+    "elementType": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"id\",\"propName\":\"node_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"分值 0 白/1 黑\",\"propName\":\"black_score\",\"propOnLine\":1}]",
+    "graphId": 5,
+    "online": 1,
+    "type": "medium_tid",
+    "owner": " ",
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "设备标识TID",
+    "gmtCreate": "2018-04-03 14:27:46",
+    "id": 23,
+    "status": 60,
+    "uniqueId": 23
+  }, {
+    "relateNodeCnt": 8,
+    "elementType": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"id\",\"propName\":\"node_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"分值 0 白/1 黑\",\"propName\":\"black_score\",\"propOnLine\":1}]",
+    "graphId": 5,
+    "online": 1,
+    "type": "medium_sim",
+    "owner": " ",
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "sim卡号",
+    "gmtCreate": "2018-04-03 14:29:04",
+    "id": 25,
+    "status": 60,
+    "uniqueId": 25
+  }, {
+    "relateNodeCnt": 8,
+    "elementType": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"id\",\"propName\":\"node_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"分值 0 白/1 黑\",\"propName\":\"black_score\",\"propOnLine\":1}]",
+    "graphId": 5,
+    "online": 1,
+    "type": "medium_apdid",
+    "owner": " ",
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "设备指纹APDID",
+    "gmtCreate": "2018-04-03 14:29:49",
+    "id": 26,
+    "status": 60,
+    "uniqueId": 26
+  }, {
+    "relateNodeCnt": 8,
+    "elementType": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"id\",\"propName\":\"node_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"分值 0 白/1 黑\",\"propName\":\"black_score\",\"propOnLine\":1}]",
+    "graphId": 5,
+    "online": 1,
+    "type": "medium_ip3_wifi",
+    "owner": " ",
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "由client_ip,wifi名称以及WiFi网关MAC（wmac）拼接",
+    "gmtCreate": "2018-04-03 14:30:37",
+    "id": 27,
+    "status": 60,
+    "uniqueId": 27
+  }, {
+    "relateNodeCnt": 8,
+    "elementType": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"id\",\"propName\":\"node_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"分值 0 白/1 黑\",\"propName\":\"black_score\",\"propOnLine\":1}]",
+    "graphId": 5,
+    "online": 1,
+    "type": "medium_ip",
+    "owner": "",
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "ip",
+    "gmtCreate": "2018-04-03 14:32:04",
+    "id": 28,
+    "status": 60,
+    "uniqueId": 28
+  }, {
+    "relateNodeCnt": 4,
+    "elementType": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"id\",\"propName\":\"node_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"分值 0 白/1 黑\",\"propName\":\"black_score\",\"propOnLine\":1}]",
+    "graphId": 5,
+    "online": 1,
+    "type": "medium_merchant_id",
+    "owner": " ",
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "商户点",
+    "gmtCreate": "2018-04-03 13:55:59",
+    "id": 12,
+    "status": 60,
+    "uniqueId": 12
+  }, {
+    "relateNodeCnt": 2,
+    "elementType": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"id\",\"propName\":\"node_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"分值 0 白/1 黑\",\"propName\":\"black_score\",\"propOnLine\":1}]",
+    "graphId": 5,
+    "online": 1,
+    "type": "medium_wx_qq",
+    "owner": " ",
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "wx qq号",
+    "gmtCreate": "2018-04-03 14:24:31",
+    "id": 20,
+    "status": 60,
+    "uniqueId": 20
+  }, {
+    "relateNodeCnt": 2,
+    "elementType": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"id\",\"propName\":\"node_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"分值 0 白/1 黑\",\"propName\":\"black_score\",\"propOnLine\":1}]",
+    "graphId": 5,
+    "online": 1,
+    "type": "medium_web_url",
+    "owner": " ",
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "url",
+    "gmtCreate": "2018-04-03 14:25:34",
+    "id": 21,
+    "status": 60,
+    "uniqueId": 21
+  }, {
+    "relateNodeCnt": 1,
+    "elementType": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"id\",\"propName\":\"node_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"分值 0 白/1 黑\",\"propName\":\"black_score\",\"propOnLine\":1}]",
+    "graphId": 5,
+    "online": 1,
+    "type": "medium_cert_no",
+    "owner": " ",
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "身份证",
+    "gmtCreate": "2018-04-03 14:02:00",
+    "id": 14,
+    "status": 60,
+    "uniqueId": 14
+  }, {
+    "relateNodeCnt": 1,
+    "elementType": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"id\",\"propName\":\"node_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"分值 0 白/1 黑\",\"propName\":\"black_score\",\"propOnLine\":1}]",
+    "graphId": 5,
+    "online": 1,
+    "type": "medium_license_number",
+    "owner": " ",
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "营业执照",
+    "gmtCreate": "2018-04-03 14:03:25",
+    "id": 15,
+    "status": 60,
+    "uniqueId": 15
+  }, {
+    "relateNodeCnt": 1,
+    "elementType": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"id\",\"propName\":\"node_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"分值 0 白/1 黑\",\"propName\":\"black_score\",\"propOnLine\":1}]",
+    "graphId": 5,
+    "online": 1,
+    "type": "medium_bank_card_no",
+    "owner": " ",
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "绑定、提现、签约、认证卡信息",
+    "gmtCreate": "2018-04-03 14:04:26",
+    "id": 16,
+    "status": 60,
+    "uniqueId": 16
+  }, {
+    "relateNodeCnt": 1,
+    "elementType": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"id\",\"propName\":\"node_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"分值 0 白/1 黑\",\"propName\":\"black_score\",\"propOnLine\":1}]",
+    "graphId": 5,
+    "online": 1,
+    "type": "medium_phone_no",
+    "owner": " ",
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "电话号码",
+    "gmtCreate": "2018-04-03 14:22:30",
+    "id": 18,
+    "status": 60,
+    "uniqueId": 18
+  }, {
+    "relateNodeCnt": 1,
+    "elementType": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"id\",\"propName\":\"node_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"分值 0 白/1 黑\",\"propName\":\"black_score\",\"propOnLine\":1}]",
+    "graphId": 5,
+    "online": 1,
+    "type": "medium_isv_pid",
+    "owner": " ",
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "合作伙伴pid",
+    "gmtCreate": "2018-04-03 14:23:27",
+    "id": 19,
+    "status": 60,
+    "uniqueId": 19
+  }, {
+    "relateNodeCnt": 1,
+    "elementType": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propDesc\":\"id\",\"propName\":\"node_id\",\"propOnLine\":1},{\"propDataType\":\"string\",\"propDesc\":\"分值 0 白/1 黑\",\"propName\":\"black_score\",\"propOnLine\":1}]",
+    "graphId": 5,
+    "online": 1,
+    "type": "medium_receiver_card_no",
+    "owner": " ",
+    "gmtModified": "2018-04-16 16:18:25",
+    "descption": "转账到同名卡",
+    "gmtCreate": "2018-04-04 10:31:03",
+    "id": 29,
+    "status": 60,
+    "uniqueId": 29
+  }, {
+    "relateNodeCnt": 0,
+    "elementType": "N",
+    "prop": "[{\"propName\":\"node_id\",\"propDesc\":\"node\",\"propDataType\":\"string\",\"propOnLine\":0},{\"propName\":\"black_score\",\"propDesc\":\"score\",\"propDataType\":\"string\",\"propOnLine\":0}]",
+    "graphId": 5,
+    "online": 0,
+    "type": "medium_imei",
+    "owner": " ",
+    "gmtModified": "2018-04-04 15:16:45",
+    "descption": "medium_imei",
+    "gmtCreate": "2018-04-04 15:09:29",
+    "id": 31,
+    "status": 999,
+    "uniqueId": 31
+  }, {
+    "relateNodeCnt": 0,
+    "elementType": "N",
+    "prop": "[{\"propDataType\":\"string\",\"propOnLine\":1,\"propName\":\"node_id\",\"propDesc\":\"imei\"},{\"propDataType\":\"string\",\"propOnLine\":1,\"propName\":\"black_score\",\"propDesc\":\"分值0 白/1 黑\"}]",
+    "graphId": 5,
+    "online": 1,
+    "type": "meidum_imei",
+    "owner": " ",
+    "gmtModified": "2018-04-04 15:19:20",
+    "descption": "imei",
+    "gmtCreate": "2018-04-04 15:16:23",
+    "id": 32,
+    "status": 70,
+    "uniqueId": 24
+  }]
+};
+
+exports = module.exports = data;
+},{}],4:[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-function edgeGen(nodeNum, edgePer) {
-  let e = [];
+const gData = require('./graphData');
 
-  for (let i = 0; i < nodeNum; i++) {
-    for (let j = i + 1; j < i + 2 && j < nodeNum; j++) {
-      //if(Math.random() > 0.5)
-      for (let k = 0; k < edgePer; k++) {
-        e.push({
-          source: 'node' + i,
-          target: 'node' + j,
-          id: 'edge' + i + j + k,
-          label: i + '->' + j + '.' + k
-        });
-      }
+function nodeCount(data) {
+  let nodes = data.nodeList;
+  let nodeMap = {};
+
+  for (let i of nodes) {
+    if (i.elementType && i.elementType === 'N') {
+      i.prop = JSON.parse(i.prop);
+      nodeMap[i.uniqueId] = {
+        origin: i,
+        related: {},
+        edge: []
+      };
+    } else {
+      console.warn('[warn]: detect non-node in nodeList;');
     }
   }
 
-  return e;
+  return nodeMap;
 }
 
-const out = {
-  edgeGen
+function edgeCount(data, nodeMap) {
+  let edges = data.edgeList;
+
+  for (let e of edges) {
+    if (nodeMap[e.source]) {
+      nodeMap[e.source].edge.push(e);
+      nodeMap[e.target].edge.push(e);
+      nodeMap[e.source].related[e.target] = nodeMap[e.target];
+      nodeMap[e.target].related[e.source] = nodeMap[e.source];
+    }
+  }
+
+  return nodeMap;
+}
+
+function collaspeNodeMap(nMap) {
+  let nArr = [];
+
+  for (let i in nMap) {
+    nArr.push(nMap[i]);
+  }
+
+  return nArr.sort((a, b) => b.edge.length - a.edge.length);
+}
+
+function getNextWay(xy, angle, len) {
+  let [x, y] = xy;
+
+  return [x + len * Math.sin(angle), y + len * Math.cos(angle)];
+}
+
+function getNodes(data, weight) {
+  const nMap = nodeCount(data);
+  const nArr = collaspeNodeMap(edgeCount(data, nMap));
+  let last = [0, 0];
+  let center = last;
+  let startAngle = Math.PI / 2;
+  let deltaAngle = 0.314 * Math.PI;
+
+  for (let i = 0; i < nArr.length; i++) {
+    if (nArr[i + 1] && nArr[i].edge.length > nArr[i + 1].edge.length * 1.5) {
+      last = getNextWay(last, startAngle, weight * 1.5);
+      center = last;
+      nArr[i].x = last[0];
+      nArr[i].y = last[1];
+      nArr[i].id = nArr[i].origin.uniqueId;
+      nArr[i].label = nArr[i].origin.descption;
+    } else {
+      last = getNextWay(center, startAngle, weight);
+      startAngle += deltaAngle;
+      nArr[i].x = last[0];
+      nArr[i].y = last[1];
+      nArr[i].id = nArr[i].origin.uniqueId;
+      nArr[i].label = nArr[i].origin.descption;
+    }
+  }
+
+  return nArr;
+}
+
+function getEdges(data) {
+  let edges = data.edgeList;
+
+  return edges.map(e => {
+    return {
+      origin: e,
+      source: e.source,
+      target: e.target,
+      id: e.uniqueId,
+      label: e.descption
+    };
+  });
+}
+
+const converter = {
+  getNodes, getEdges
 };
 
-exports.default = out;
-},{}],4:[function(require,module,exports) {
+exports.default = converter;
+},{"./graphData":3}],2:[function(require,module,exports) {
 "use strict";
 
 var _g = require("@antv/g6");
@@ -416,44 +1998,21 @@ var _fineEdge = require("./fine-edge");
 
 var _fineEdge2 = _interopRequireDefault(_fineEdge);
 
-var _gen = require("./gen");
+var _graphData = require("./graphData");
 
-var _gen2 = _interopRequireDefault(_gen);
+var _graphData2 = _interopRequireDefault(_graphData);
+
+var _dataConvert = require("./data-convert");
+
+var _dataConvert2 = _interopRequireDefault(_dataConvert);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const data = {
-  "nodes": [{
-    "x": 140,
-    "y": 210,
-    "id": "node0",
-    "angle": -1 / 3 * Math.PI
-  }, {
-    "x": 1270,
-    "y": 210,
-    "id": "node1",
-    "angle": 1 / 3 * Math.PI
-  }, {
-    "x": 270,
-    "y": 1210,
-    "id": "node2",
-    "angle": -1 * Math.PI
-  }, {
-    "x": 1270,
-    "y": 1210,
-    "id": "node3"
-  }, {
-    "x": 1270,
-    "y": 810,
-    "id": "node4"
-  }, {
-    "x": 870,
-    "y": 1210,
-    "id": "node5"
-  }]
-};
+const nodes = _dataConvert2.default.getNodes(_graphData2.default, 300);
 
-data.edges = _gen2.default.edgeGen(6, 5);
+const edges = _dataConvert2.default.getEdges(_graphData2.default);
+
+console.log(nodes, '\n', edges);
 
 _fineEdge2.default.regsLine(_g2.default);
 
@@ -465,13 +2024,13 @@ const net = new _g2.default.Net({
   height: window.innerHeight
 });
 
-net.source(data.nodes, data.edges);
+net.source(nodes, edges);
 
-net.node().color('red').size(30).shape('circle');
-net.edge().color('blue').size(1).shape('rline');
+net.node().color('red').size(100).shape('circle');
+net.edge().color('blue').size(1).shape('sline');
 
 net.render();
-},{"@antv/g6":6,"./fine-edge":8,"./gen":9}],0:[function(require,module,exports) {
+},{"@antv/g6":6,"./fine-edge":5,"./graphData":3,"./data-convert":4}],0:[function(require,module,exports) {
 var global = (1,eval)('this');
 var OldModule = module.bundle.Module;
 function Module() {
@@ -489,7 +2048,7 @@ function Module() {
 module.bundle.Module = Module;
 
 if (!module.bundle.parent) {
-  var ws = new WebSocket('ws://localhost:60338/');
+  var ws = new WebSocket('ws://localhost:53098/');
   ws.onmessage = (e) => {
     var data = JSON.parse(e.data);
 
@@ -571,4 +2130,4 @@ function hmrAccept(bundle, id) {
 
   return getParents(global.require, id).some(id => hmrAccept(global.require, id));
 }
-},{}]},{},[0,4])
+},{}]},{},[0,2])

@@ -1,48 +1,13 @@
 import G6 from '@antv/g6';
 import r from './fine-edge';
-import gen from './gen';
+import gData from './graphData';
+import converter from './data-convert';
 
-const data = {
-  "nodes": [
-    {
-      "x": 140,
-      "y": 210,
-      "id": "node0",
-      "angle": - 1/3 * Math.PI
-    },
-    {
-      "x": 1270,
-      "y": 210,
-      "id": "node1",
-      "angle": 1/3 * Math.PI
-    },
-    {
-      "x": 270,
-      "y": 1210,
-      "id": "node2",
-      "angle": - 1 * Math.PI
-    },
-    {
-      "x": 1270,
-      "y": 1210,
-      "id": "node3"
-    },
-    {
-      "x": 1270,
-      "y": 810,
-      "id": "node4"
-    },
-    {
-      "x": 870,
-      "y": 1210,
-      "id": "node5"
-    },
-  ]
-};
+const nodes = converter.getNodes(gData, 300);
 
+const edges = converter.getEdges(gData);
 
-data.edges = gen.edgeGen(6,5);
-
+console.log(nodes,'\n', edges)
 
 r.regsLine(G6)
 
@@ -55,15 +20,15 @@ const net = new G6.Net({
 });
 
 
-net.source(data.nodes, data.edges);
+net.source(nodes, edges);
 
 net.node()
   .color('red')
-  .size(30)
+  .size(100)
   .shape('circle');
 net.edge()
   .color('blue')
   .size(1)
-  .shape('rline');
+  .shape('sline');
 
 net.render();
